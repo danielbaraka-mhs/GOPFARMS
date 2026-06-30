@@ -1486,15 +1486,10 @@
         tabSignin.addEventListener("click", () => setMode("signin"));
         tabSignup.addEventListener("click", () => setMode("signup"));
 
-        // Optional: enable real Google sign-in by providing a Client ID.
-        // If empty, we keep it as a UI placeholder.
-        const GOOGLE_CLIENT_ID = ""; // <-- paste your Google OAuth Client ID here
-        if (!GOOGLE_CLIENT_ID) {
-          googleBtn.addEventListener("click", () => {
-            alert("Google sign-in is not configured yet. Paste your Google Client ID in the home template to enable it.");
-          });
-          return;
-        }
+        const googleSigninUrl = "{% url 'social:begin' 'google-oauth2' %}";
+        googleBtn.addEventListener("click", () => {
+          window.location.href = googleSigninUrl;
+        });
       })();
     </script>
    

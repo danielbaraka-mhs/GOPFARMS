@@ -12,6 +12,234 @@
   .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
   .scrollbar-thin::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 8px; }
   .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+
+  /* ===== Animations ===== */
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.92); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes growBar {
+    from { height: 0; }
+  }
+  @keyframes pulseRing {
+    0% { box-shadow: 0 0 0 0 rgba(34,197,94,0.35); }
+    70% { box-shadow: 0 0 0 8px rgba(34,197,94,0); }
+    100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+  }
+
+  .anim-fade-up { animation: fadeSlideUp 0.5s ease both; }
+  .anim-fade { animation: fadeIn 0.4s ease both; }
+  .anim-pop { animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both; }
+
+  section, aside, header { transition: box-shadow 0.25s ease, transform 0.25s ease; }
+
+  /* card hover lift */
+  article, section.bg-white, section.rounded-2xl {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  article:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px -10px rgba(0,0,0,0.12);
+  }
+
+  /* sidebar buttons */
+  aside button, header button {
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+  }
+  aside button:hover, header button:hover {
+    transform: translateY(-1px);
+  }
+  aside button:active, header button:active {
+    transform: translateY(0) scale(0.95);
+  }
+
+  /* progress bars animate width */
+  .bg-green-500.rounded-t-md, .bg-green-400.rounded-t-md {
+    transition: height 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .h-full.bg-green-500.rounded-full {
+    transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* notification badge pulse */
+  header .bg-red-500 {
+    animation: pulseRing 2.2s infinite;
+  }
+
+  /* gauge ticks draw-in */
+  #gauge line {
+    opacity: 0;
+    animation: fadeIn 0.4s ease forwards;
+  }
+
+  /* modal transitions */
+  #trackOrderModal {
+    transition: opacity 0.25s ease;
+  }
+  #trackOrderModal > div {
+    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), opacity 0.25s ease;
+  }
+  #trackOrderModal.hidden > div { transform: scale(0.95); opacity: 0; }
+
+  /* settings avatar */
+  #settingsView .rounded-full.bg-gradient-to-br {
+    transition: transform 0.3s ease;
+  }
+  #settingsView .rounded-full.bg-gradient-to-br:hover {
+    transform: scale(1.05) rotate(-2deg);
+  }
+
+  /* buttons subtle press */
+  button { transition: transform 0.15s ease, background-color 0.2s ease, box-shadow 0.2s ease; }
+  button:active { transform: scale(0.97); }
+
+  /* staggered fade-up helper classes applied via JS */
+  .stagger-child { opacity: 0; }
+
+  /* ===== Verification flow ===== */
+  .step-dot {
+    background: #F3F4F6;
+    color: #9CA3AF;
+  }
+  [data-step-indicator].is-active .step-dot {
+    background: #16A34A;
+    color: #ffffff;
+    box-shadow: 0 0 0 5px rgba(22,163,74,0.12);
+  }
+  [data-step-indicator].is-active .step-label {
+    color: #111827;
+  }
+  [data-step-indicator].is-done .step-dot {
+    background: #DCFCE7;
+    color: #16A34A;
+  }
+  [data-step-indicator].is-done .step-label {
+    color: #6B7280;
+  }
+
+  .code-box.h-13 { height: 3.25rem; }
+
+  .verify-step-enter {
+    animation: fadeSlideUp 0.35s ease both;
+  }
+
+  @keyframes successPop {
+    0% { transform: scale(0); opacity: 0; }
+    60% { transform: scale(1.12); opacity: 1; }
+    100% { transform: scale(1); }
+  }
+  @keyframes checkDraw {
+    from { stroke-dashoffset: 40; }
+    to { stroke-dashoffset: 0; }
+  }
+  .success-pop { animation: successPop 0.5s cubic-bezier(0.34,1.56,0.64,1) both; }
+  .success-pop svg path {
+    stroke-dasharray: 40;
+    stroke-dashoffset: 40;
+    animation: checkDraw 0.4s ease 0.35s forwards;
+  }
+
+  .method-card.is-selected {
+    border-color: #4ADE80;
+    background-color: rgba(74, 222, 128, 0.06);
+  }
+
+  #uploadDropzone.is-dragover {
+    border-color: #4ADE80;
+    background-color: rgba(74, 222, 128, 0.06);
+  }
+
+  /* ===== Preference toggle switches ===== */
+  .pref-switch {
+    width: 42px;
+    height: 24px;
+    border-radius: 999px;
+    background: #E5E7EB;
+    position: relative;
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+  }
+  .pref-switch-knob {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .pref-switch.is-on {
+    background: #22C55E;
+  }
+  .pref-switch.is-on .pref-switch-knob {
+    transform: translateX(18px);
+  }
+
+  .unit-toggle-btn {
+    color: #9CA3AF;
+  }
+  .unit-toggle-btn.is-active {
+    background: #FFFFFF;
+    color: #111827;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+  }
+
+  /* ===== Dark mode theme ===== */
+  html.dark-theme body { background: #0F1115; color: #E5E7EB; }
+  html.dark-theme aside,
+  html.dark-theme header,
+  html.dark-theme section,
+  html.dark-theme article,
+  html.dark-theme #trackOrderModal > div,
+  html.dark-theme .rounded-2xl.border,
+  html.dark-theme .rounded-xl.border {
+    background-color: #181B22 !important;
+    border-color: #262B35 !important;
+  }
+  html.dark-theme .bg-\[\#F2F4F1\] { background-color: #0F1115 !important; }
+  html.dark-theme .bg-gray-50 { background-color: #20242C !important; }
+  html.dark-theme .bg-white { background-color: #181B22 !important; }
+  html.dark-theme .text-gray-900 { color: #F3F4F6 !important; }
+  html.dark-theme .text-gray-700 { color: #D1D5DB !important; }
+  html.dark-theme .text-gray-500,
+  html.dark-theme .text-gray-400 { color: #8B93A3 !important; }
+  html.dark-theme .border-gray-100,
+  html.dark-theme .border-gray-200 { border-color: #262B35 !important; }
+  html.dark-theme .divide-gray-100 > * + * { border-color: #262B35 !important; }
+  html.dark-theme input,
+  html.dark-theme select {
+    background-color: #20242C !important;
+    border-color: #2C313C !important;
+    color: #E5E7EB !important;
+  }
+  html.dark-theme .pref-switch:not(.is-on) { background: #2C313C; }
+  html.dark-theme .unit-toggle-btn.is-active { background: #2C313C; color: #F3F4F6; }
+  html.dark-theme .bg-gray-900 { background-color: #F3F4F6 !important; color: #0F1115 !important; }
+  html * { transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease; }
+
+  /* ===== Notifications dropdown ===== */
+  #notifPanel {
+    transform-origin: top right;
+    animation: notifPopIn 0.18s cubic-bezier(0.16,1,0.3,1) both;
+  }
+  @keyframes notifPopIn {
+    from { opacity: 0; transform: scale(0.95) translateY(-6px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .notif-item.is-unread { background-color: rgba(59,130,246,0.04); }
+  html.dark-theme .notif-item.is-unread { background-color: rgba(59,130,246,0.08); }
 </style>
 </head>
 <body class="bg-[#F2F4F1] text-gray-900 antialiased">
@@ -19,10 +247,10 @@
 <div class="flex h-screen overflow-hidden">
 
   <!-- ============ SIDEBAR ============ -->
-  <aside class="w-16 bg-white border-r border-gray-100 flex flex-col items-center justify-between py-5 shrink-0">
+  <aside class="w-16 bg-white border-r border-gray-100 flex flex-col items-center justify-between py-5 shrink-0 anim-fade">
     <div class="flex flex-col items-center gap-7">
       <!-- Logo -->
-      <div class="w-9 h-9 rounded-xl bg-green-500 flex items-center justify-center text-white shadow-sm shadow-green-200">
+      <div class="w-9 h-9 rounded-xl bg-green-500 flex items-center justify-center text-white shadow-sm shadow-green-200 anim-pop">
         <button onclick="openDashboard()" class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 1.5 3.8 1.5 6 0 4-3.5 7.5-7.5 7.5h-2z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 11 13 11 11"/></svg>
         </button>
@@ -42,7 +270,7 @@
       <button id="navSettings" onclick="showSettings()" class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition" aria-label="Settings">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09A1.65 1.65 0 0 0 15 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
-      <div class="w-9 h-9 rounded-full bg-gradient-to-br from-amber-200 to-amber-400 border-2 border-white shadow-sm"></div>
+      <div class="w-9 h-9 rounded-full bg-gradient-to-br from-amber-200 to-amber-400 border-2 border-white shadow-sm anim-pop"></div>
     </div>
   </aside>
 
@@ -50,13 +278,13 @@
   <div class="flex-1 flex flex-col min-w-0">
 
     <!-- Header -->
-    <header class="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-7 shrink-0">
+    <header class="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-7 shrink-0 anim-fade relative z-30">
       <h1 class="font-semibold text-[17px] text-gray-900">Greenhouse Monitoring</h1>
 
       <div class="flex items-center gap-3">
         <div class="relative">
           <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-          <input type="text" placeholder="Search" class="w-44 pl-9 pr-3 py-2 text-sm rounded-lg bg-gray-50 border border-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-200" />
+          <input type="text" placeholder="Search" class="w-44 pl-9 pr-3 py-2 text-sm rounded-lg bg-gray-50 border border-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-200 transition-shadow" />
         </div>
 
         <div class="flex items-center gap-1.5 text-sm text-gray-500 px-1">
@@ -64,14 +292,76 @@
           09:00 am
         </div>
 
-        <button class="w-9 h-9 rounded-lg flex items-center justify-center text-gray-500 hover:bg-gray-50 transition" aria-label="Refresh">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.36"/><path d="M21 4v5h-5"/></svg>
+        <button class="w-9 h-9 rounded-lg flex items-center justify-center text-gray-500 hover:bg-gray-50 transition" aria-label="Refresh" onclick="this.querySelector('svg').classList.toggle('spin-once')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.5s ease;"><path d="M21 12a9 9 0 1 1-2.6-6.36"/><path d="M21 4v5h-5"/></svg>
         </button>
 
-        <button class="relative w-9 h-9 rounded-lg flex items-center justify-center text-gray-500 hover:bg-gray-50 transition" aria-label="Notifications">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 4 1.5 5.5 1.5 6.5H4.5C4.5 13.5 6 12 6 8Z"/><path d="M9.5 18a2.5 2.5 0 0 0 5 0"/></svg>
-          <span class="absolute top-1.5 right-1.5 w-3.5 h-3.5 bg-red-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center ring-2 ring-white">2</span>
-        </button>
+        <div class="relative">
+          <button id="notifBellBtn" onclick="toggleNotifications()" class="relative w-9 h-9 rounded-lg flex items-center justify-center text-gray-500 hover:bg-gray-50 transition" aria-label="Notifications" aria-haspopup="true" aria-expanded="false">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 4 1.5 5.5 1.5 6.5H4.5C4.5 13.5 6 12 6 8Z"/><path d="M9.5 18a2.5 2.5 0 0 0 5 0"/></svg>
+            <span id="notifBadge" class="absolute top-1.5 right-1.5 w-3.5 h-3.5 bg-red-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center ring-2 ring-white">2</span>
+          </button>
+
+          <!-- Notifications dropdown -->
+          <div id="notifPanel" class="hidden absolute right-0 top-12 w-80 bg-white rounded-2xl border border-gray-100 shadow-xl z-50 overflow-hidden">
+            <div class="flex items-center justify-between px-4 py-3.5 border-b border-gray-100">
+              <p class="text-sm font-semibold text-gray-900">Notifications</p>
+              <button onclick="markAllRead()" class="text-xs font-medium text-blue-600 hover:text-blue-700 transition">Mark all read</button>
+            </div>
+
+            <div class="max-h-80 overflow-y-auto scrollbar-thin divide-y divide-gray-50" id="notifList">
+              <button onclick="readNotif(this)" class="notif-item w-full flex items-start gap-3 px-4 py-3.5 text-left hover:bg-gray-50 transition relative is-unread">
+                <div class="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-red-500 shrink-0 mt-0.5">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.7 3.86a2 2 0 0 0-3.4 0Z"/></svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-gray-900">Soil moisture sensor anomaly</p>
+                  <p class="text-xs text-gray-400 mt-0.5">Bed 3 reading is 18% below normal range.</p>
+                  <p class="text-[11px] text-gray-300 mt-1">12 minutes ago</p>
+                </div>
+                <span class="notif-dot w-2 h-2 rounded-full bg-blue-500 shrink-0 mt-2"></span>
+              </button>
+
+              <button onclick="readNotif(this)" class="notif-item w-full flex items-start gap-3 px-4 py-3.5 text-left hover:bg-gray-50 transition relative is-unread">
+                <div class="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 shrink-0 mt-0.5">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-gray-900">Irrigation cycle complete</p>
+                  <p class="text-xs text-gray-400 mt-0.5">Drip line watering finished for Zone A.</p>
+                  <p class="text-[11px] text-gray-300 mt-1">1 hour ago</p>
+                </div>
+                <span class="notif-dot w-2 h-2 rounded-full bg-blue-500 shrink-0 mt-2"></span>
+              </button>
+
+              <button onclick="readNotif(this)" class="notif-item w-full flex items-start gap-3 px-4 py-3.5 text-left hover:bg-gray-50 transition relative">
+                <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-green-600 shrink-0 mt-0.5">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-gray-700">Task completed</p>
+                  <p class="text-xs text-gray-400 mt-0.5">"Nutrient Mixing" was marked done by Harper Kim.</p>
+                  <p class="text-[11px] text-gray-300 mt-1">3 hours ago</p>
+                </div>
+              </button>
+
+              <button onclick="readNotif(this)" class="notif-item w-full flex items-start gap-3 px-4 py-3.5 text-left hover:bg-gray-50 transition relative">
+                <div class="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center text-amber-600 shrink-0 mt-0.5">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-medium text-gray-700">Task due soon</p>
+                  <p class="text-xs text-gray-400 mt-0.5">"Soil Aeration" is due in 45 minutes.</p>
+                  <p class="text-[11px] text-gray-300 mt-1">Yesterday</p>
+                </div>
+              </button>
+            </div>
+
+            <div class="px-4 py-3 border-t border-gray-100">
+              <button class="w-full text-center text-xs font-medium text-gray-500 hover:text-gray-700 transition">View all notifications</button>
+            </div>
+          </div>
+        </div>
       </div>
     </header>
 
@@ -84,7 +374,7 @@
         <div class="flex flex-col gap-6 min-w-0">
 
           <!-- Overview card -->
-          <section class="bg-white rounded-2xl border border-gray-100 p-6">
+          <section class="bg-white rounded-2xl border border-gray-100 p-6 anim-fade-up" style="animation-delay:0.05s">
             <div class="flex items-start justify-between mb-6">
               <div>
                 <h2 class="text-lg font-semibold text-gray-900">Overview</h2>
@@ -98,7 +388,7 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <!-- Stat 1 -->
-              <div class="rounded-xl border border-gray-100 p-4">
+              <div class="rounded-xl border border-gray-100 p-4 anim-fade-up" style="animation-delay:0.12s">
                 <div class="flex items-center gap-2 mb-4">
                   <div class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></svg>
@@ -109,7 +399,7 @@
                 <p class="text-xs text-gray-400 mt-1">Total tasks scheduled for today</p>
               </div>
               <!-- Stat 2 -->
-              <div class="rounded-xl border border-gray-100 p-4">
+              <div class="rounded-xl border border-gray-100 p-4 anim-fade-up" style="animation-delay:0.18s">
                 <div class="flex items-center gap-2 mb-4">
                   <div class="w-7 h-7 rounded-full bg-green-50 flex items-center justify-center text-green-600">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
@@ -120,7 +410,7 @@
                 <p class="text-xs text-gray-400 mt-1">Tasks completed successfully so far</p>
               </div>
               <!-- Stat 3 -->
-              <div class="rounded-xl border border-gray-100 p-4">
+              <div class="rounded-xl border border-gray-100 p-4 anim-fade-up" style="animation-delay:0.24s">
                 <div class="flex items-center gap-2 mb-4">
                   <div class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
@@ -134,7 +424,7 @@
           </section>
 
           <!-- Board card -->
-          <section class="bg-white rounded-2xl border border-gray-100 p-6">
+          <section class="bg-white rounded-2xl border border-gray-100 p-6 anim-fade-up" style="animation-delay:0.1s">
             <div class="flex items-center justify-between mb-6">
               <div class="flex items-center gap-1 bg-gray-50 rounded-lg p-1">
                 <button class="px-3.5 py-1.5 text-sm font-medium rounded-md bg-white text-gray-900 shadow-sm">Board</button>
@@ -156,7 +446,7 @@
                   <button class="text-gray-300 hover:text-gray-500"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></button>
                 </div>
 
-                <article class="rounded-xl border border-gray-100 p-4">
+                <article class="rounded-xl border border-gray-100 p-4 anim-fade-up" style="animation-delay:0.3s">
                   <h3 class="text-sm font-semibold text-gray-900">Soil Aeration</h3>
                   <p class="text-xs text-gray-400 mt-1 leading-relaxed">Loosen soil around the plants carefully without damaging roots.</p>
                   <div class="flex items-center gap-1.5 text-xs text-gray-400 mt-3">
@@ -169,7 +459,7 @@
                   </div>
                 </article>
 
-                <article class="rounded-xl border border-gray-100 p-4">
+                <article class="rounded-xl border border-gray-100 p-4 anim-fade-up" style="animation-delay:0.36s">
                   <h3 class="text-sm font-semibold text-gray-900">Mulch Renewal</h3>
                   <p class="text-xs text-gray-400 mt-1 leading-relaxed">Add organic mulch to stabilize soil moisture levels.</p>
                   <div class="flex items-center gap-1.5 text-xs text-gray-400 mt-3">
@@ -190,7 +480,7 @@
                   <button class="text-gray-300 hover:text-gray-500"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></button>
                 </div>
 
-                <article class="rounded-xl border border-gray-100 p-4">
+                <article class="rounded-xl border border-gray-100 p-4 anim-fade-up" style="animation-delay:0.42s">
                   <h3 class="text-sm font-semibold text-gray-900">Drip Line Inspection</h3>
                   <p class="text-xs text-gray-400 mt-1 leading-relaxed">Check drip irrigation lines for leaks and blockages.</p>
                   <div class="flex items-center gap-1.5 text-xs text-gray-400 mt-3">
@@ -203,13 +493,13 @@
                   </div>
                   <div class="flex items-center gap-2">
                     <div class="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                      <div class="h-full bg-green-500 rounded-full" style="width:60%"></div>
+                      <div class="h-full bg-green-500 rounded-full progress-bar" data-width="60" style="width:0%"></div>
                     </div>
                     <span class="text-xs font-medium text-gray-500">60%</span>
                   </div>
                 </article>
 
-                <article class="rounded-xl border border-gray-100 p-4">
+                <article class="rounded-xl border border-gray-100 p-4 anim-fade-up" style="animation-delay:0.48s">
                   <h3 class="text-sm font-semibold text-gray-900">Nutrient Mixing</h3>
                   <p class="text-xs text-gray-400 mt-1 leading-relaxed">Review fertilizer ratios applied to planting beds.</p>
                   <div class="flex items-center gap-1.5 text-xs text-gray-400 mt-3">
@@ -222,7 +512,7 @@
                   </div>
                   <div class="flex items-center gap-2">
                     <div class="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                      <div class="h-full bg-green-500 rounded-full" style="width:80%"></div>
+                      <div class="h-full bg-green-500 rounded-full progress-bar" data-width="80" style="width:0%"></div>
                     </div>
                     <span class="text-xs font-medium text-gray-500">80%</span>
                   </div>
@@ -236,7 +526,7 @@
                   <button class="text-gray-300 hover:text-gray-500"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></button>
                 </div>
 
-                <article class="rounded-xl border border-gray-100 p-4">
+                <article class="rounded-xl border border-gray-100 p-4 anim-fade-up" style="animation-delay:0.54s">
                   <h3 class="text-sm font-semibold text-gray-900">Climate Sensor Calibration</h3>
                   <p class="text-xs text-gray-400 mt-1 leading-relaxed">Validate temperature and humidity sensor accuracy.</p>
                   <div class="flex items-center gap-1.5 text-xs text-gray-400 mt-3">
@@ -249,7 +539,7 @@
                   </div>
                   <div class="flex items-center gap-2">
                     <div class="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                      <div class="h-full bg-green-500 rounded-full" style="width:92%"></div>
+                      <div class="h-full bg-green-500 rounded-full progress-bar" data-width="92" style="width:0%"></div>
                     </div>
                     <span class="text-xs font-medium text-gray-500">92%</span>
                   </div>
@@ -264,7 +554,7 @@
         <div class="flex flex-col gap-6 min-w-0">
 
           <!-- Crop Progress -->
-          <section class="bg-white rounded-2xl border border-gray-100 p-6">
+          <section class="bg-white rounded-2xl border border-gray-100 p-6 anim-fade-up" style="animation-delay:0.15s">
             <div class="flex items-center justify-between mb-2">
               <h3 class="text-sm font-semibold text-gray-900">Crop Progress</h3>
               <button class="text-gray-300 hover:text-gray-500"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></button>
@@ -287,7 +577,7 @@
           </section>
 
           <!-- Irrigation Time -->
-          <section class="bg-white rounded-2xl border border-gray-100 p-6">
+          <section class="bg-white rounded-2xl border border-gray-100 p-6 anim-fade-up" style="animation-delay:0.2s">
             <div class="flex items-center justify-between mb-5">
               <h3 class="text-sm font-semibold text-gray-900">Irrigation Time</h3>
               <button class="text-gray-300 hover:text-gray-500"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></button>
@@ -302,23 +592,23 @@
               </div>
               <div class="flex-1 flex items-end justify-between gap-2.5 h-32 border-l border-gray-100 pl-3">
                 <div class="flex flex-col items-center gap-2 flex-1">
-                  <div class="w-full max-w-[26px] bg-green-500 rounded-t-md" style="height:70%"></div>
+                  <div class="w-full max-w-[26px] bg-green-500 rounded-t-md bar-grow" data-height="70" style="height:0%"></div>
                   <span class="text-[11px] text-gray-400">Mon</span>
                 </div>
                 <div class="flex flex-col items-center gap-2 flex-1">
-                  <div class="w-full max-w-[26px] bg-green-400 rounded-t-md" style="height:42%"></div>
+                  <div class="w-full max-w-[26px] bg-green-400 rounded-t-md bar-grow" data-height="42" style="height:0%"></div>
                   <span class="text-[11px] text-gray-400">Tue</span>
                 </div>
                 <div class="flex flex-col items-center gap-2 flex-1">
-                  <div class="w-full max-w-[26px] bg-green-400 rounded-t-md" style="height:62%"></div>
+                  <div class="w-full max-w-[26px] bg-green-400 rounded-t-md bar-grow" data-height="62" style="height:0%"></div>
                   <span class="text-[11px] text-gray-400">Wed</span>
                 </div>
                 <div class="flex flex-col items-center gap-2 flex-1">
-                  <div class="w-full max-w-[26px] bg-green-500 rounded-t-md" style="height:95%"></div>
+                  <div class="w-full max-w-[26px] bg-green-500 rounded-t-md bar-grow" data-height="95" style="height:0%"></div>
                   <span class="text-[11px] text-gray-400">Thu</span>
                 </div>
                 <div class="flex flex-col items-center gap-2 flex-1">
-                  <div class="w-full max-w-[26px] bg-green-400 rounded-t-md" style="height:52%"></div>
+                  <div class="w-full max-w-[26px] bg-green-400 rounded-t-md bar-grow" data-height="52" style="height:0%"></div>
                   <span class="text-[11px] text-gray-400">Fri</span>
                 </div>
               </div>
@@ -326,7 +616,7 @@
           </section>
 
           <!-- Smart Task Update -->
-          <section class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-600 to-green-500 p-6 text-white">
+          <section class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-600 to-green-500 p-6 text-white anim-fade-up" style="animation-delay:0.26s">
             <div class="absolute -right-4 -top-4 w-28 h-28 rounded-full bg-white/10"></div>
             <div class="absolute right-3 bottom-3 text-white/25">
               <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 1.5 3.8 1.5 6 0 4-3.5 7.5-7.5 7.5h-2z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 11 13 11 11"/></svg>
@@ -346,12 +636,13 @@
 
           <!-- Tabs -->
           <div class="flex items-center gap-8 border-b border-gray-100 mb-8">
-            <button class="text-sm font-semibold text-blue-600 pb-3 border-b-2 border-blue-600 -mb-px">Edit Profile</button>
-            <button class="text-sm font-medium text-gray-400 pb-3 hover:text-gray-600">Preferences</button>
-            <button class="text-sm font-medium text-gray-400 pb-3 hover:text-gray-600">Security</button>
+            <button id="tabProfile" onclick="showSettingsTab('profile')" class="text-sm font-semibold text-blue-600 pb-3 border-b-2 border-blue-600 -mb-px transition-colors">Edit Profile</button>
+            <button id="tabPreferences" onclick="showSettingsTab('preferences')" class="text-sm font-medium text-gray-400 pb-3 border-b-2 border-transparent hover:text-gray-600 transition-colors">Preferences</button>
+            <button id="tabSecurity" onclick="showSettingsTab('security')" class="text-sm font-medium text-gray-400 pb-3 border-b-2 border-transparent hover:text-gray-600 transition-colors">Security</button>
           </div>
 
-          <div class="flex flex-col lg:flex-row gap-10">
+          <!-- ===== Profile panel ===== -->
+          <div id="profilePanel" class="flex flex-col lg:flex-row gap-10">
             <!-- Avatar -->
             <div class="shrink-0">
               <div class="relative w-28 h-28">
@@ -368,47 +659,47 @@
             <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
               <div>
                 <label class="block text-sm text-gray-700 mb-1.5">Your Name</label>
-                <input type="text" value="Harper Kim" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300" />
+                <input type="text" value="Harper Kim" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-shadow" />
               </div>
               <div>
                 <label class="block text-sm text-gray-700 mb-1.5">User Name</label>
-                <input type="text" value="HarperKimsWorld" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300" />
+                <input type="text" value="HarperKimsWorld" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-shadow" />
               </div>
 
               <div>
                 <label class="block text-sm text-gray-700 mb-1.5">Email</label>
-                <input type="email" value="harper_kim@example.com" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300" />
+                <input type="email" value="harper_kim@example.com" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-shadow" />
               </div>
               <div>
                 <label class="block text-sm text-gray-700 mb-1.5">Password</label>
-                <input type="password" value="123456789" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300" />
+                <input type="password" value="123456789" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-shadow" />
               </div>
 
               <div>
                 <label class="block text-sm text-gray-700 mb-1.5">Date of Birth</label>
-                <input type="text" value="January 1, 1987" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300" />
+                <input type="text" value="January 1, 1987" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-shadow" />
               </div>
               <div>
                 <label class="block text-sm text-gray-700 mb-1.5">Present Address</label>
-                <input type="text" value="Los Angeles, California, USA" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300" />
+                <input type="text" value="Los Angeles, California, USA" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-shadow" />
               </div>
 
               <div>
                 <label class="block text-sm text-gray-700 mb-1.5">Permanent Address</label>
-                <input type="text" value="1234 Main Street, Los Angeles, CA 90001" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300" />
+                <input type="text" value="1234 Main Street, Los Angeles, CA 90001" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-shadow" />
               </div>
               <div>
                 <label class="block text-sm text-gray-700 mb-1.5">City</label>
-                <input type="text" value="Los Angeles" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300" />
+                <input type="text" value="Los Angeles" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-shadow" />
               </div>
 
               <div>
                 <label class="block text-sm text-gray-700 mb-1.5">Postal Code</label>
-                <input type="text" value="90012" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300" />
+                <input type="text" value="90012" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-shadow" />
               </div>
               <div>
                 <label class="block text-sm text-gray-700 mb-1.5">Country</label>
-                <input type="text" value="USA" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300" />
+                <input type="text" value="USA" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-shadow" />
               </div>
             </div>
           </div>
@@ -416,6 +707,358 @@
           <div class="flex justify-end mt-8">
             <button class="bg-blue-600 hover:bg-blue-700 transition text-white text-sm font-semibold px-8 py-3 rounded-xl">Save</button>
           </div>
+          </div>
+          <!-- ===== /Profile panel ===== -->
+
+          <!-- ===== Preferences panel ===== -->
+          <div id="preferencesPanel" class="hidden">
+            <div class="max-w-2xl flex flex-col gap-8">
+
+              <!-- Appearance -->
+              <div>
+                <h3 class="text-sm font-semibold text-gray-900 mb-1">Appearance</h3>
+                <p class="text-xs text-gray-400 mb-4">Control how Greenhouse Monitoring looks on this device.</p>
+
+                <div class="rounded-2xl border border-gray-100 divide-y divide-gray-100">
+                  <div class="flex items-center justify-between gap-4 p-4">
+                    <div class="flex items-center gap-3.5">
+                      <div class="w-9 h-9 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
+                      </div>
+                      <div>
+                        <p class="text-sm font-medium text-gray-900">Dark mode</p>
+                        <p class="text-xs text-gray-400 mt-0.5">Use a darker theme that's easier on the eyes at night.</p>
+                      </div>
+                    </div>
+                    <button id="darkModeToggle" onclick="toggleDarkMode()" class="pref-switch shrink-0" role="switch" aria-checked="false" aria-label="Dark mode">
+                      <span class="pref-switch-knob"></span>
+                    </button>
+                  </div>
+
+                  <div class="flex items-center justify-between gap-4 p-4">
+                    <div class="flex items-center gap-3.5">
+                      <div class="w-9 h-9 rounded-lg bg-sky-50 flex items-center justify-center text-sky-600 shrink-0">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="4" y1="10" x2="20" y2="10"/><line x1="10" y1="10" x2="10" y2="20"/></svg>
+                      </div>
+                      <div>
+                        <p class="text-sm font-medium text-gray-900">Compact layout</p>
+                        <p class="text-xs text-gray-400 mt-0.5">Reduce spacing to fit more on screen at once.</p>
+                      </div>
+                    </div>
+                    <button class="pref-switch shrink-0" onclick="togglePrefSwitch(this)" role="switch" aria-checked="false" aria-label="Compact layout">
+                      <span class="pref-switch-knob"></span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Notifications -->
+              <div>
+                <h3 class="text-sm font-semibold text-gray-900 mb-1">Notifications</h3>
+                <p class="text-xs text-gray-400 mb-4">Choose what Greenhouse Monitoring should alert you about.</p>
+
+                <div class="rounded-2xl border border-gray-100 divide-y divide-gray-100">
+                  <div class="flex items-center justify-between gap-4 p-4">
+                    <div class="flex items-center gap-3.5">
+                      <div class="w-9 h-9 rounded-lg bg-green-50 flex items-center justify-center text-green-600 shrink-0">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+                      </div>
+                      <div>
+                        <p class="text-sm font-medium text-gray-900">Task reminders</p>
+                        <p class="text-xs text-gray-400 mt-0.5">Get notified before a scheduled task is due.</p>
+                      </div>
+                    </div>
+                    <button class="pref-switch is-on shrink-0" onclick="togglePrefSwitch(this)" role="switch" aria-checked="true" aria-label="Task reminders">
+                      <span class="pref-switch-knob"></span>
+                    </button>
+                  </div>
+
+                  <div class="flex items-center justify-between gap-4 p-4">
+                    <div class="flex items-center gap-3.5">
+                      <div class="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                      </div>
+                      <div>
+                        <p class="text-sm font-medium text-gray-900">Irrigation alerts</p>
+                        <p class="text-xs text-gray-400 mt-0.5">Notify when watering starts, finishes, or is skipped.</p>
+                      </div>
+                    </div>
+                    <button class="pref-switch is-on shrink-0" onclick="togglePrefSwitch(this)" role="switch" aria-checked="true" aria-label="Irrigation alerts">
+                      <span class="pref-switch-knob"></span>
+                    </button>
+                  </div>
+
+                  <div class="flex items-center justify-between gap-4 p-4">
+                    <div class="flex items-center gap-3.5">
+                      <div class="w-9 h-9 rounded-lg bg-red-50 flex items-center justify-center text-red-500 shrink-0">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.7 3.86a2 2 0 0 0-3.4 0Z"/></svg>
+                      </div>
+                      <div>
+                        <p class="text-sm font-medium text-gray-900">Sensor anomalies</p>
+                        <p class="text-xs text-gray-400 mt-0.5">Alert me if temperature, humidity, or soil readings look off.</p>
+                      </div>
+                    </div>
+                    <button class="pref-switch is-on shrink-0" onclick="togglePrefSwitch(this)" role="switch" aria-checked="true" aria-label="Sensor anomalies">
+                      <span class="pref-switch-knob"></span>
+                    </button>
+                  </div>
+
+                  <div class="flex items-center justify-between gap-4 p-4">
+                    <div class="flex items-center gap-3.5">
+                      <div class="w-9 h-9 rounded-lg bg-amber-50 flex items-center justify-center text-amber-600 shrink-0">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+                      </div>
+                      <div>
+                        <p class="text-sm font-medium text-gray-900">Weekly summary email</p>
+                        <p class="text-xs text-gray-400 mt-0.5">A digest of harvest progress and completed tasks every Monday.</p>
+                      </div>
+                    </div>
+                    <button class="pref-switch shrink-0" onclick="togglePrefSwitch(this)" role="switch" aria-checked="false" aria-label="Weekly summary email">
+                      <span class="pref-switch-knob"></span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Regional -->
+              <div>
+                <h3 class="text-sm font-semibold text-gray-900 mb-1">Regional</h3>
+                <p class="text-xs text-gray-400 mb-4">Units and formats used across your dashboard.</p>
+
+                <div class="rounded-2xl border border-gray-100 divide-y divide-gray-100">
+                  <div class="flex items-center justify-between gap-4 p-4 flex-wrap">
+                    <div>
+                      <p class="text-sm font-medium text-gray-900">Temperature unit</p>
+                      <p class="text-xs text-gray-400 mt-0.5">Used for climate and sensor readings.</p>
+                    </div>
+                    <div class="flex items-center gap-1 bg-gray-50 rounded-lg p-1 shrink-0">
+                      <button class="unit-toggle-btn is-active px-3.5 py-1.5 text-sm font-medium rounded-md transition-all" onclick="setUnit(this,'C')">Celsius</button>
+                      <button class="unit-toggle-btn px-3.5 py-1.5 text-sm font-medium rounded-md transition-all" onclick="setUnit(this,'F')">Fahrenheit</button>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center justify-between gap-4 p-4 flex-wrap">
+                    <div>
+                      <p class="text-sm font-medium text-gray-900">Date format</p>
+                      <p class="text-xs text-gray-400 mt-0.5">How dates appear on tasks and reports.</p>
+                    </div>
+                    <select class="text-sm font-medium text-gray-700 bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-200 shrink-0">
+                      <option>Sep 10, 2024</option>
+                      <option>10/09/2024</option>
+                      <option>09/10/2024</option>
+                      <option>2024-09-10</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Data -->
+              <div>
+                <h3 class="text-sm font-semibold text-gray-900 mb-1">Data &amp; sync</h3>
+                <p class="text-xs text-gray-400 mb-4">How often the dashboard checks for new sensor data.</p>
+
+                <div class="rounded-2xl border border-gray-100 p-4">
+                  <div class="flex items-center justify-between gap-4 mb-1">
+                    <p class="text-sm font-medium text-gray-900">Auto-refresh interval</p>
+                    <span id="refreshIntervalLabel" class="text-sm font-semibold text-green-600">5 min</span>
+                  </div>
+                  <p class="text-xs text-gray-400 mb-4">Lower intervals update faster but use more data.</p>
+                  <input type="range" min="0" max="3" step="1" value="1" id="refreshSlider" oninput="updateRefreshLabel(this)" class="w-full accent-green-500" />
+                  <div class="flex justify-between text-[11px] text-gray-400 mt-1.5">
+                    <span>1 min</span>
+                    <span>5 min</span>
+                    <span>15 min</span>
+                    <span>Off</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex justify-end">
+                <button class="bg-blue-600 hover:bg-blue-700 transition text-white text-sm font-semibold px-8 py-3 rounded-xl">Save preferences</button>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- ===== Security panel: identity verification ===== -->
+          <div id="securityPanel" class="hidden">
+
+            <!-- Verification status card -->
+            <div class="rounded-2xl border border-gray-100 p-5 flex items-center justify-between gap-4 mb-7 flex-wrap" id="verifyStatusCard">
+              <div class="flex items-center gap-3.5">
+                <div id="verifyStatusIcon" class="w-11 h-11 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 shrink-0">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.7 3.86a2 2 0 0 0-3.4 0Z"/></svg>
+                </div>
+                <div>
+                  <p class="text-sm font-semibold text-gray-900">Identity not verified</p>
+                  <p id="verifyStatusSub" class="text-xs text-gray-400 mt-0.5">Verify your identity to secure your account and unlock all features.</p>
+                </div>
+              </div>
+              <button id="startVerifyBtn" onclick="startVerification()" class="flex items-center gap-1.5 bg-gray-900 hover:bg-gray-800 transition text-white text-sm font-semibold px-4 py-2.5 rounded-xl shrink-0">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+                Start verification
+              </button>
+            </div>
+
+            <!-- Stepper -->
+            <div id="verifyStepper" class="hidden mb-8">
+              <div class="flex items-center">
+                <div class="flex flex-col items-center gap-2 flex-1" data-step-indicator="1">
+                  <div class="step-dot w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300">1</div>
+                  <span class="step-label text-[11px] font-medium text-gray-400 transition-colors duration-300">Method</span>
+                </div>
+                <div class="step-line h-0.5 flex-1 bg-gray-100 -mt-5 rounded-full overflow-hidden">
+                  <div class="step-line-fill h-full bg-green-500 transition-all duration-500" style="width:0%"></div>
+                </div>
+                <div class="flex flex-col items-center gap-2 flex-1" data-step-indicator="2">
+                  <div class="step-dot w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300">2</div>
+                  <span class="step-label text-[11px] font-medium text-gray-400 transition-colors duration-300">Document</span>
+                </div>
+                <div class="step-line h-0.5 flex-1 bg-gray-100 -mt-5 rounded-full overflow-hidden">
+                  <div class="step-line-fill h-full bg-green-500 transition-all duration-500" style="width:0%"></div>
+                </div>
+                <div class="flex flex-col items-center gap-2 flex-1" data-step-indicator="3">
+                  <div class="step-dot w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300">3</div>
+                  <span class="step-label text-[11px] font-medium text-gray-400 transition-colors duration-300">Code</span>
+                </div>
+                <div class="step-line h-0.5 flex-1 bg-gray-100 -mt-5 rounded-full overflow-hidden">
+                  <div class="step-line-fill h-full bg-green-500 transition-all duration-500" style="width:0%"></div>
+                </div>
+                <div class="flex flex-col items-center gap-2 flex-1" data-step-indicator="4">
+                  <div class="step-dot w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300">4</div>
+                  <span class="step-label text-[11px] font-medium text-gray-400 transition-colors duration-300">Done</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 1: choose method -->
+            <div id="verifyStep1" class="hidden">
+              <div class="max-w-lg mx-auto">
+                <h3 class="text-base font-semibold text-gray-900 mb-1.5 text-center">Choose a verification method</h3>
+                <p class="text-sm text-gray-400 text-center mb-7">Pick how you'd like to confirm it's really you.</p>
+
+                <div class="flex flex-col gap-3">
+                  <button onclick="selectMethod('id', event)" class="method-card group flex items-center gap-4 p-4 rounded-2xl border-2 border-gray-100 hover:border-green-400 hover:bg-green-50/40 transition-all text-left">
+                    <div class="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shrink-0 group-hover:scale-105 transition-transform">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="8.5" cy="11.5" r="2.2"/><path d="M14 14h6M14 10h6M5 16.5c.7-1.4 2-2 3.5-2s2.8.6 3.5 2"/></svg>
+                    </div>
+                    <div class="flex-1">
+                      <p class="text-sm font-semibold text-gray-900">Government ID</p>
+                      <p class="text-xs text-gray-400 mt-0.5">Upload a national ID, passport, or driver's licence</p>
+                    </div>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-300 group-hover:text-green-500 group-hover:translate-x-0.5 transition-all shrink-0"><path d="m9 18 6-6-6-6"/></svg>
+                  </button>
+
+                  <button onclick="selectMethod('phone', event)" class="method-card group flex items-center gap-4 p-4 rounded-2xl border-2 border-gray-100 hover:border-green-400 hover:bg-green-50/40 transition-all text-left">
+                    <div class="w-11 h-11 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 shrink-0 group-hover:scale-105 transition-transform">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg>
+                    </div>
+                    <div class="flex-1">
+                      <p class="text-sm font-semibold text-gray-900">Phone number</p>
+                      <p class="text-xs text-gray-400 mt-0.5">Get a one-time code by SMS</p>
+                    </div>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-300 group-hover:text-green-500 group-hover:translate-x-0.5 transition-all shrink-0"><path d="m9 18 6-6-6-6"/></svg>
+                  </button>
+
+                  <button onclick="selectMethod('email', event)" class="method-card group flex items-center gap-4 p-4 rounded-2xl border-2 border-gray-100 hover:border-green-400 hover:bg-green-50/40 transition-all text-left">
+                    <div class="w-11 h-11 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 shrink-0 group-hover:scale-105 transition-transform">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 8.97 6.14a2 2 0 0 0 2.06 0L22 7"/></svg>
+                    </div>
+                    <div class="flex-1">
+                      <p class="text-sm font-semibold text-gray-900">Email address</p>
+                      <p class="text-xs text-gray-400 mt-0.5">Get a one-time code by email</p>
+                    </div>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-300 group-hover:text-green-500 group-hover:translate-x-0.5 transition-all shrink-0"><path d="m9 18 6-6-6-6"/></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 2: document upload -->
+            <div id="verifyStep2" class="hidden">
+              <div class="max-w-lg mx-auto">
+                <h3 class="text-base font-semibold text-gray-900 mb-1.5 text-center" id="step2Title">Upload your document</h3>
+                <p class="text-sm text-gray-400 text-center mb-7" id="step2Sub">Make sure all four corners are visible and the text is readable.</p>
+
+                <label id="uploadDropzone" class="relative flex flex-col items-center justify-center gap-3 border-2 border-dashed border-gray-200 rounded-2xl py-12 px-6 cursor-pointer hover:border-green-400 hover:bg-green-50/30 transition-all">
+                  <input type="file" id="docUploadInput" class="hidden" accept="image/*" onchange="handleFileSelected(this)" />
+                  <div id="uploadIconWrap" class="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-gray-400">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>
+                  </div>
+                  <div class="text-center">
+                    <p class="text-sm font-medium text-gray-700">Click to upload, or drag a file here</p>
+                    <p class="text-xs text-gray-400 mt-1">PNG or JPG, up to 10MB</p>
+                  </div>
+                </label>
+
+                <div id="uploadedFileCard" class="hidden items-center gap-3 mt-4 p-3.5 rounded-xl border border-green-100 bg-green-50/50">
+                  <div class="w-9 h-9 rounded-lg bg-green-500 flex items-center justify-center text-white shrink-0">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p id="uploadedFileName" class="text-sm font-medium text-gray-900 truncate">document.jpg</p>
+                    <p class="text-xs text-gray-400">Looks good</p>
+                  </div>
+                  <button onclick="resetUpload()" class="text-gray-300 hover:text-gray-500 shrink-0" aria-label="Remove file">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                  </button>
+                </div>
+
+                <div id="confirmDetailCard" class="hidden flex-col items-center text-center gap-3 py-8">
+                  <div class="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+                  </div>
+                  <p class="text-sm text-gray-600 max-w-xs">We'll send a 6-digit code to confirm this is you. Tap continue when you're ready.</p>
+                </div>
+
+                <div class="flex items-center gap-3 mt-8">
+                  <button onclick="goToStep(1)" class="flex-1 border border-gray-200 rounded-full py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition">Back</button>
+                  <button id="step2ContinueBtn" onclick="goToStep(3)" disabled class="flex-1 bg-gray-900 text-white rounded-full py-2.5 text-sm font-semibold hover:bg-gray-800 transition disabled:opacity-40 disabled:cursor-not-allowed">Continue</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 3: enter code -->
+            <div id="verifyStep3" class="hidden">
+              <div class="max-w-sm mx-auto text-center">
+                <div class="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mx-auto mb-5">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </div>
+                <h3 class="text-base font-semibold text-gray-900 mb-1.5">Enter verification code</h3>
+                <p class="text-sm text-gray-400 mb-7">We sent a 6-digit code to <span id="codeDestination" class="text-gray-600 font-medium">your contact</span></p>
+
+                <div class="flex justify-center gap-2.5 mb-3" id="codeInputs">
+                  <input maxlength="1" inputmode="numeric" class="code-box w-11 h-13 sm:w-12 sm:h-14 text-center text-xl font-bold rounded-xl border-2 border-gray-200 focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-50 transition-all" />
+                  <input maxlength="1" inputmode="numeric" class="code-box w-11 h-13 sm:w-12 sm:h-14 text-center text-xl font-bold rounded-xl border-2 border-gray-200 focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-50 transition-all" />
+                  <input maxlength="1" inputmode="numeric" class="code-box w-11 h-13 sm:w-12 sm:h-14 text-center text-xl font-bold rounded-xl border-2 border-gray-200 focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-50 transition-all" />
+                  <input maxlength="1" inputmode="numeric" class="code-box w-11 h-13 sm:w-12 sm:h-14 text-center text-xl font-bold rounded-xl border-2 border-gray-200 focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-50 transition-all" />
+                  <input maxlength="1" inputmode="numeric" class="code-box w-11 h-13 sm:w-12 sm:h-14 text-center text-xl font-bold rounded-xl border-2 border-gray-200 focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-50 transition-all" />
+                  <input maxlength="1" inputmode="numeric" class="code-box w-11 h-13 sm:w-12 sm:h-14 text-center text-xl font-bold rounded-xl border-2 border-gray-200 focus:outline-none focus:border-green-400 focus:ring-4 focus:ring-green-50 transition-all" />
+                </div>
+                <p id="codeError" class="hidden text-xs font-medium text-red-500 mb-2">That code didn't match. Try again.</p>
+                <button onclick="resendCode()" class="text-xs font-medium text-gray-400 hover:text-gray-600 transition mb-7">Didn't get a code? <span class="text-blue-600 font-semibold">Resend</span></button>
+
+                <div class="flex items-center gap-3">
+                  <button onclick="goToStep(2)" class="flex-1 border border-gray-200 rounded-full py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition">Back</button>
+                  <button onclick="submitCode()" class="flex-1 bg-gray-900 text-white rounded-full py-2.5 text-sm font-semibold hover:bg-gray-800 transition">Verify</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 4: success -->
+            <div id="verifyStep4" class="hidden">
+              <div class="max-w-sm mx-auto text-center py-4">
+                <div class="w-20 h-20 rounded-full bg-green-500 flex items-center justify-center text-white mx-auto mb-6 success-pop">
+                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-1.5">You're verified</h3>
+                <p class="text-sm text-gray-400 mb-8">Your identity has been confirmed. Your account is now fully secured.</p>
+                <button onclick="finishVerification()" class="bg-gray-900 text-white rounded-full py-2.5 px-8 text-sm font-semibold hover:bg-gray-800 transition">Done</button>
+              </div>
+            </div>
+
+          </div>
+          <!-- ===== /Security panel ===== -->
 
         </div>
       </div>
@@ -452,9 +1095,22 @@
       line.setAttribute('stroke', color);
       line.setAttribute('stroke-width', '7');
       line.setAttribute('stroke-linecap', 'round');
+      line.style.animationDelay = (i * 0.012) + 's';
       svg.appendChild(line);
     }
   })();
+
+  // Animate bars and progress fills on load
+  window.addEventListener('DOMContentLoaded', function () {
+    setTimeout(function () {
+      document.querySelectorAll('.bar-grow').forEach(function (el) {
+        el.style.height = el.getAttribute('data-height') + '%';
+      });
+      document.querySelectorAll('.progress-bar').forEach(function (el) {
+        el.style.width = el.getAttribute('data-width') + '%';
+      });
+    }, 150);
+  });
 </script>
 
 <!-- ============ TRACK ORDER MODAL ============ -->
@@ -612,6 +1268,7 @@
   function showSettings() {
     document.getElementById('dashboardView').classList.add('hidden');
     document.getElementById('settingsView').classList.remove('hidden');
+    document.getElementById('settingsView').firstElementChild.classList.add('anim-fade-up');
     setActiveNav('navSettings');
   }
   function showDashboard() {
@@ -630,6 +1287,263 @@
         btn.classList.add('text-gray-400');
       }
     });
+  }
+
+  // ===== Settings sub-tabs =====
+  function showSettingsTab(tab) {
+    const panels = { profile: 'profilePanel', preferences: 'preferencesPanel', security: 'securityPanel' };
+    const tabs = { profile: 'tabProfile', preferences: 'tabPreferences', security: 'tabSecurity' };
+
+    Object.keys(panels).forEach(function (key) {
+      document.getElementById(panels[key]).classList.toggle('hidden', key !== tab);
+      const tabBtn = document.getElementById(tabs[key]);
+      if (key === tab) {
+        tabBtn.classList.add('text-blue-600', 'font-semibold', 'border-blue-600');
+        tabBtn.classList.remove('text-gray-400', 'font-medium', 'border-transparent');
+      } else {
+        tabBtn.classList.remove('text-blue-600', 'font-semibold', 'border-blue-600');
+        tabBtn.classList.add('text-gray-400', 'font-medium', 'border-transparent');
+      }
+    });
+
+    if (tab === 'security') {
+      const activePanel = document.getElementById(panels[tab]);
+      activePanel.classList.add('verify-step-enter');
+      setTimeout(function () { activePanel.classList.remove('verify-step-enter'); }, 400);
+    }
+  }
+
+  // ===== Identity verification flow =====
+  let selectedMethod = null;
+  let currentStep = 0; // 0 = not started
+
+  function startVerification() {
+    document.getElementById('verifyStepper').classList.remove('hidden');
+    goToStep(1);
+  }
+
+  function selectMethod(method, evt) {
+    selectedMethod = method;
+    document.querySelectorAll('.method-card').forEach(function (card) {
+      card.classList.remove('is-selected');
+    });
+    if (evt && evt.currentTarget) evt.currentTarget.classList.add('is-selected');
+
+    const titles = {
+      id: { title: 'Upload your government ID', sub: "Make sure all four corners are visible and the text is readable." },
+      phone: { title: 'Confirm your phone number', sub: "We'll text you a 6-digit code to confirm it's yours." },
+      email: { title: 'Confirm your email address', sub: "We'll email you a 6-digit code to confirm it's yours." }
+    };
+    document.getElementById('step2Title').textContent = titles[method].title;
+    document.getElementById('step2Sub').textContent = titles[method].sub;
+
+    const destLabel = { id: 'your contact', phone: 'your phone', email: 'your email' };
+    document.getElementById('codeDestination').textContent = destLabel[method];
+
+    const dropzone = document.getElementById('uploadDropzone');
+    const continueBtn = document.getElementById('step2ContinueBtn');
+    if (method === 'id') {
+      dropzone.classList.remove('hidden');
+      document.getElementById('confirmDetailCard').classList.add('hidden');
+      document.getElementById('confirmDetailCard').classList.remove('flex');
+      continueBtn.disabled = true;
+      resetUpload();
+    } else {
+      dropzone.classList.add('hidden');
+      document.getElementById('uploadedFileCard').classList.add('hidden');
+      document.getElementById('uploadedFileCard').classList.remove('flex');
+      document.getElementById('confirmDetailCard').classList.remove('hidden');
+      document.getElementById('confirmDetailCard').classList.add('flex');
+      continueBtn.disabled = false;
+    }
+
+    setTimeout(function () { goToStep(2); }, 280);
+  }
+
+  function goToStep(step) {
+    currentStep = step;
+    for (let i = 1; i <= 4; i++) {
+      const panel = document.getElementById('verifyStep' + i);
+      panel.classList.toggle('hidden', i !== step);
+      if (i === step) panel.classList.add('verify-step-enter');
+    }
+
+    // update stepper visuals (steps 1-4 map to indicators 1-4)
+    document.querySelectorAll('[data-step-indicator]').forEach(function (el) {
+      const idx = parseInt(el.getAttribute('data-step-indicator'), 10);
+      el.classList.remove('is-active', 'is-done');
+      if (idx < step) {
+        el.classList.add('is-done');
+        el.querySelector('.step-dot').innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>';
+      } else if (idx === step) {
+        el.classList.add('is-active');
+        el.querySelector('.step-dot').textContent = idx;
+      } else {
+        el.querySelector('.step-dot').textContent = idx;
+      }
+    });
+
+    const fills = document.querySelectorAll('.step-line-fill');
+    fills.forEach(function (fill, i) {
+      fill.style.width = (i < step - 1) ? '100%' : '0%';
+    });
+
+    if (step === 3) {
+      setTimeout(function () {
+        const first = document.querySelector('.code-box');
+        if (first) first.focus();
+      }, 100);
+    }
+  }
+
+  function handleFileSelected(input) {
+    if (!input.files || !input.files[0]) return;
+    document.getElementById('uploadedFileName').textContent = input.files[0].name;
+    document.getElementById('uploadedFileCard').classList.remove('hidden');
+    document.getElementById('uploadedFileCard').classList.add('flex');
+    document.getElementById('uploadDropzone').classList.add('hidden');
+    document.getElementById('step2ContinueBtn').disabled = false;
+  }
+
+  function resetUpload() {
+    document.getElementById('docUploadInput').value = '';
+    document.getElementById('uploadedFileCard').classList.add('hidden');
+    document.getElementById('uploadedFileCard').classList.remove('flex');
+    document.getElementById('uploadDropzone').classList.remove('hidden');
+    document.getElementById('step2ContinueBtn').disabled = true;
+  }
+
+  // For non-ID methods, step 2 isn't a file upload - skip straight through if no file required
+  function maybeSkipUploadStep() {
+    if (selectedMethod !== 'id') {
+      document.getElementById('step2ContinueBtn').disabled = false;
+    }
+  }
+
+  // code box auto-advance
+  document.addEventListener('input', function (e) {
+    if (!e.target.classList.contains('code-box')) return;
+    e.target.value = e.target.value.replace(/[^0-9]/g, '');
+    document.getElementById('codeError').classList.add('hidden');
+    if (e.target.value && e.target.nextElementSibling && e.target.nextElementSibling.classList.contains('code-box')) {
+      e.target.nextElementSibling.focus();
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (!e.target.classList.contains('code-box')) return;
+    if (e.key === 'Backspace' && !e.target.value && e.target.previousElementSibling && e.target.previousElementSibling.classList.contains('code-box')) {
+      e.target.previousElementSibling.focus();
+    }
+  });
+
+  function resendCode() {
+    document.querySelectorAll('.code-box').forEach(function (box) { box.value = ''; });
+    document.getElementById('codeError').classList.add('hidden');
+    const first = document.querySelector('.code-box');
+    if (first) first.focus();
+  }
+
+  function submitCode() {
+    const values = Array.from(document.querySelectorAll('.code-box')).map(function (b) { return b.value; });
+    if (values.some(function (v) { return v === ''; })) {
+      document.getElementById('codeError').textContent = "Enter all 6 digits to continue.";
+      document.getElementById('codeError').classList.remove('hidden');
+      return;
+    }
+    // Any complete code is accepted in this demo flow
+    goToStep(4);
+  }
+
+  function finishVerification() {
+    document.getElementById('verifyStepper').classList.add('hidden');
+    document.getElementById('verifyStatusIcon').className = 'w-11 h-11 rounded-full bg-green-50 flex items-center justify-center text-green-600 shrink-0';
+    document.getElementById('verifyStatusIcon').innerHTML = '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>';
+    document.querySelector('#verifyStatusCard p.text-sm.font-semibold').textContent = 'Identity verified';
+    document.getElementById('verifyStatusSub').textContent = 'Your account is fully secured.';
+    document.getElementById('startVerifyBtn').classList.add('hidden');
+    for (let i = 1; i <= 4; i++) {
+      document.getElementById('verifyStep' + i).classList.add('hidden');
+    }
+  }
+
+  // ===== Preferences controls =====
+  function togglePrefSwitch(btn) {
+    const isOn = btn.classList.toggle('is-on');
+    btn.setAttribute('aria-checked', isOn ? 'true' : 'false');
+  }
+
+  function toggleDarkMode() {
+    const isDark = document.documentElement.classList.toggle('dark-theme');
+    document.getElementById('darkModeToggle').classList.toggle('is-on', isDark);
+    document.getElementById('darkModeToggle').setAttribute('aria-checked', isDark ? 'true' : 'false');
+  }
+
+  function setUnit(btn, unit) {
+    document.querySelectorAll('.unit-toggle-btn').forEach(function (b) { b.classList.remove('is-active'); });
+    btn.classList.add('is-active');
+  }
+
+  function updateRefreshLabel(slider) {
+    const labels = ['1 min', '5 min', '15 min', 'Off'];
+    document.getElementById('refreshIntervalLabel').textContent = labels[slider.value];
+  }
+
+  // ===== Notifications dropdown =====
+  function toggleNotifications() {
+    const panel = document.getElementById('notifPanel');
+    const isHidden = panel.classList.contains('hidden');
+    if (isHidden) {
+      panel.classList.remove('hidden');
+      document.getElementById('notifBellBtn').setAttribute('aria-expanded', 'true');
+    } else {
+      closeNotifications();
+    }
+  }
+
+  function closeNotifications() {
+    const panel = document.getElementById('notifPanel');
+    panel.classList.add('hidden');
+    document.getElementById('notifBellBtn').setAttribute('aria-expanded', 'false');
+  }
+
+  document.addEventListener('click', function (e) {
+    const panel = document.getElementById('notifPanel');
+    const bell = document.getElementById('notifBellBtn');
+    if (!panel || panel.classList.contains('hidden')) return;
+    if (!panel.contains(e.target) && !bell.contains(e.target)) {
+      closeNotifications();
+    }
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeNotifications();
+  });
+
+  function updateNotifBadge() {
+    const unreadCount = document.querySelectorAll('.notif-item.is-unread').length;
+    const badge = document.getElementById('notifBadge');
+    if (unreadCount === 0) {
+      badge.classList.add('hidden');
+    } else {
+      badge.classList.remove('hidden');
+      badge.textContent = unreadCount;
+    }
+  }
+
+  function readNotif(btn) {
+    btn.classList.remove('is-unread');
+    const dot = btn.querySelector('.notif-dot');
+    if (dot) dot.remove();
+    updateNotifBadge();
+  }
+
+  function markAllRead() {
+    document.querySelectorAll('.notif-item.is-unread').forEach(function (item) {
+      item.classList.remove('is-unread');
+      const dot = item.querySelector('.notif-dot');
+      if (dot) dot.remove();
+    });
+    updateNotifBadge();
   }
 </script>
 
