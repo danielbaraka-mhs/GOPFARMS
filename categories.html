@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GOP FARMS — Categories</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tailwind (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Poppins", "ui-sans-serif", "system-ui"],
+              serif: ["Playfair Display", "ui-serif", "Georgia"],
+            },
+            colors: {
+              brand: {
+                50: "#F3FAF7",
+                100: "#E6F3EE",
+                200: "#CBE6DC",
+                300: "#A7D3C3",
+                400: "#7CBBA6",
+                500: "#5A9E8B",
+                600: "#3F806F",
+                700: "#2E6155",
+                800: "#21463D",
+                900: "#163129",
+              },
+              peach: {
+                50: "#FFF7F3",
+                100: "#FDEAE0",
+                200: "#FAD6C3",
+                300: "#F6BE9F",
+                400: "#F1A077",
+                500: "#EA7E4E",
+                600: "#D96435",
+                700: "#B54C27",
+                800: "#8A3A1F",
+                900: "#5D2615",
+              },
+              ink: "#22323A",
+              paper: "#FBFBF8",
+            },
+            boxShadow: {
+              soft: "0 18px 45px rgba(34, 50, 58, 0.10)",
+              card: "0 10px 30px rgba(34, 50, 58, 0.10)",
+            },
+            keyframes: {
+              blob: {
+                "0%": { transform: "translate(0, 0) scale(1)" },
+                "33%": { transform: "translate(18px, -14px) scale(1.04)" },
+                "66%": { transform: "translate(-14px, 18px) scale(0.98)" },
+                "100%": { transform: "translate(0, 0) scale(1)" },
+              },
+              pop: {
+                "0%": { transform: "scale(0.98)" },
+                "100%": { transform: "scale(1)" },
+              },
+            },
+            animation: {
+              blob: "blob 14s ease-in-out infinite",
+              pop: "pop .18s ease-out both",
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      :root {
+        color-scheme: light;
+      }
+      html,
+      body {
+        background: #fbfbf8;
+        color: #22323a;
+      }
+      .reveal {
+        opacity: 0;
+        transform: translateY(14px);
+        transition:
+          opacity 700ms cubic-bezier(0.2, 0.9, 0.2, 1),
+          transform 700ms cubic-bezier(0.2, 0.9, 0.2, 1);
+        will-change: transform, opacity;
+      }
+      .reveal.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .reveal[data-reveal="left"] {
+        transform: translateX(-14px);
+      }
+      .reveal.is-visible[data-reveal="left"] {
+        transform: translateX(0);
+      }
+      .reveal[data-reveal="right"] {
+        transform: translateX(14px);
+      }
+      .reveal.is-visible[data-reveal="right"] {
+        transform: translateX(0);
+      }
+      .reveal[data-reveal="scale"] {
+        transform: translateY(10px) scale(0.985);
+      }
+      .reveal.is-visible[data-reveal="scale"] {
+        transform: translateY(0) scale(1);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .reveal,
+        .reveal.is-visible {
+          opacity: 1 !important;
+          transform: none !important;
+          transition: none !important;
+        }
+        .animate-blob {
+          animation: none !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body class="font-sans antialiased">
+    <!-- Header -->
+    <header class="sticky top-0 z-30 border-b border-ink/5 bg-paper/75 backdrop-blur">
+      <div class="mx-auto flex max-w-6xl items-center gap-4 px-3 py-3.5">
+        <a href="index.html" class="flex items-center gap-2 transition duration-300 hover:-translate-y-0.5">
+          <span class="grid h-9 w-9 place-items-center rounded-xl bg-brand-600 text-white shadow-sm transition duration-300 hover:shadow-md">
+            <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 3s-7.5.6-12.2 5.3C4.1 12.9 3 21 3 21s8.1-1.1 12.7-5.8C20.4 10.5 21 3 21 3Z" />
+              <path d="M9 15c.8-3.3 3.7-6.2 7-7" stroke-linecap="round" />
+            </svg>
+          </span>
+          <div class="-space-y-0.5">
+            <div class="font-serif text-lg font-semibold tracking-wide text-ink">
+              <span class="font-semibold">GOP</span> <span class="font-semibold text-brand-700">FARMS</span>
+            </div>
+            <div class="text-[11px] tracking-wide text-ink/60">Fresh • Organic • Local</div>
+          </div>
+        </a>
+
+        <nav class="hidden flex-1 items-center justify-center gap-7 text-sm text-ink/80 md:flex">
+          <a class="hover:text-ink transition" href="index.html">Home</a>
+          <a class="text-ink font-semibold" href="categories.html">Categories</a>
+          <a class="hover:text-ink transition" href="index.html#products">Products</a>
+          <a class="hover:text-ink transition" href="index.html#about">About</a>
+          <a class="hover:text-ink transition" href="index.html#blog">Blog</a>
+          <a class="hover:text-ink transition" href="index.html#contact">Contact</a>
+        </nav>
+
+        <div class="ml-auto flex items-center gap-2">
+          <a
+            href="index.html#products"
+            class="rounded-full bg-brand-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-brand-700 active:translate-y-0"
+          >
+            Shop
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="relative overflow-hidden">
+      <div class="absolute inset-0 -z-10">
+        <div class="absolute -top-24 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-brand-100 blur-3xl animate-blob"></div>
+        <div class="absolute -bottom-56 right-[-120px] h-[520px] w-[520px] rounded-full bg-peach-100 blur-3xl animate-blob [animation-delay:-4s]"></div>
+      </div>
+
+      <div class="mx-auto max-w-6xl px-3 py-10">
+        <div class="reveal is-visible" data-reveal="scale">
+          <div class="text-xs font-semibold tracking-[0.25em] text-ink/55">CATEGORIES</div>
+          <h1 class="mt-2 font-serif text-4xl font-semibold tracking-tight sm:text-5xl">Browse “cat items”</h1>
+          <p class="mt-4 max-w-2xl text-sm text-ink/70 sm:text-base">
+            Pick a category to see curated items. This page is designed to match the look, colors, and rounded tiles from your main layout.
+          </p>
+        </div>
+
+        <div class="mt-7 flex flex-wrap items-center gap-2 reveal is-visible" data-reveal="scale">
+          <button data-cat="all" class="cat-btn rounded-full bg-brand-600 px-4 py-2 text-xs font-semibold text-white shadow-sm">All</button>
+          <button data-cat="fruits" class="cat-btn rounded-full border border-ink/10 bg-white px-4 py-2 text-xs font-semibold text-ink/80 hover:bg-brand-50">
+            Fruits
+          </button>
+          <button data-cat="vegetables" class="cat-btn rounded-full border border-ink/10 bg-white px-4 py-2 text-xs font-semibold text-ink/80 hover:bg-brand-50">
+            Vegetables
+          </button>
+          <button data-cat="organic" class="cat-btn rounded-full border border-ink/10 bg-white px-4 py-2 text-xs font-semibold text-ink/80 hover:bg-brand-50">
+            Organic
+          </button>
+          <button data-cat="seasonal" class="cat-btn rounded-full border border-ink/10 bg-white px-4 py-2 text-xs font-semibold text-ink/80 hover:bg-brand-50">
+            Seasonal
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Category tiles -->
+    <section class="mx-auto max-w-6xl px-3 pb-8">
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <a
+          href="#items"
+          data-cat-jump="fruits"
+          class="group rounded-3xl bg-peach-50 p-6 shadow-sm ring-1 ring-peach-100 transition duration-300 hover:-translate-y-1 hover:shadow-card reveal"
+          data-reveal="left"
+        >
+          <div class="text-xs font-semibold tracking-wide text-ink/70">CATEGORY</div>
+          <div class="mt-2 font-serif text-2xl font-semibold">Fruits</div>
+          <div class="mt-1 text-sm text-ink/70">Sweet &amp; seasonal picks</div>
+          <img
+            class="mt-5 h-36 w-full rounded-2xl object-cover transition duration-700 group-hover:scale-[1.03]"
+            src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=80"
+            alt="Fruits"
+            loading="lazy"
+          />
+        </a>
+
+        <a
+          href="#items"
+          data-cat-jump="vegetables"
+          class="group rounded-3xl bg-brand-50 p-6 shadow-sm ring-1 ring-brand-100 transition duration-300 hover:-translate-y-1 hover:shadow-card reveal"
+          data-reveal="scale"
+        >
+          <div class="text-xs font-semibold tracking-wide text-ink/70">CATEGORY</div>
+          <div class="mt-2 font-serif text-2xl font-semibold">Vegetables</div>
+          <div class="mt-1 text-sm text-ink/70">Crisp greens &amp; roots</div>
+          <img
+            class="mt-5 h-36 w-full rounded-2xl object-cover transition duration-700 group-hover:scale-[1.03]"
+            src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1200&q=80"
+            alt="Vegetables"
+            loading="lazy"
+          />
+        </a>
+
+        <a
+          href="#items"
+          data-cat-jump="organic"
+          class="group rounded-3xl bg-white p-6 shadow-sm ring-1 ring-ink/5 transition duration-300 hover:-translate-y-1 hover:shadow-card reveal"
+          data-reveal="scale"
+        >
+          <div class="text-xs font-semibold tracking-wide text-ink/70">CATEGORY</div>
+          <div class="mt-2 font-serif text-2xl font-semibold">Organic</div>
+          <div class="mt-1 text-sm text-ink/70">No chemicals</div>
+          <img
+            class="mt-5 h-36 w-full rounded-2xl object-cover transition duration-700 group-hover:scale-[1.03]"
+            src="https://images.unsplash.com/photo-1543168256-418811576931?auto=format&fit=crop&w=1200&q=80"
+            alt="Organic basket"
+            loading="lazy"
+          />
+        </a>
+
+        <a
+          href="#items"
+          data-cat-jump="seasonal"
+          class="group rounded-3xl bg-peach-50 p-6 shadow-sm ring-1 ring-peach-100 transition duration-300 hover:-translate-y-1 hover:shadow-card reveal"
+          data-reveal="right"
+        >
+          <div class="text-xs font-semibold tracking-wide text-ink/70">CATEGORY</div>
+          <div class="mt-2 font-serif text-2xl font-semibold">Seasonal</div>
+          <div class="mt-1 text-sm text-ink/70">Best flavor now</div>
+          <img
+            class="mt-5 h-36 w-full rounded-2xl object-cover transition duration-700 group-hover:scale-[1.03]"
+            src="https://images.unsplash.com/photo-1464965911861-746a04b4bca6?auto=format&fit=crop&w=1200&q=80"
+            alt="Seasonal berries"
+            loading="lazy"
+          />
+        </a>
+      </div>
+    </section>
+
+    <!-- Items -->
+    <section id="items" class="mx-auto max-w-6xl px-3 pb-12">
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div class="reveal" data-reveal="left">
+          <div class="text-xs font-semibold tracking-[0.25em] text-ink/55">ITEMS</div>
+          <h2 class="mt-2 font-serif text-3xl font-semibold tracking-tight sm:text-4xl">Category items</h2>
+          <p id="itemsHint" class="mt-2 text-sm text-ink/70">Showing: All</p>
+        </div>
+        <div class="flex items-center gap-2 reveal" data-reveal="right">
+          <input
+            id="search"
+            class="w-[220px] rounded-full border border-ink/10 bg-white px-4 py-2 text-sm outline-none transition focus:ring-2 focus:ring-brand-200"
+            placeholder="Search items…"
+          />
+        </div>
+      </div>
+
+      <div id="itemsGrid" class="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <!-- item card template: data-cat -->
+        <article data-cat="fruits organic" class="item group rounded-3xl bg-peach-50 p-5 shadow-sm ring-1 ring-peach-100 transition duration-300 hover:-translate-y-1 hover:shadow-card reveal" data-reveal="left">
+          <div class="flex items-center justify-between">
+            <span class="rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-ink/70 ring-1 ring-ink/10">Fruits</span>
+            <span class="text-xs font-semibold text-ink/55">$4.99</span>
+          </div>
+          <div class="mt-4 overflow-hidden rounded-2xl bg-white/60 p-3">
+            <img class="h-36 w-full rounded-xl object-cover transition duration-700 group-hover:scale-[1.05]" src="https://images.unsplash.com/photo-1576186726115-4d51596775c9?auto=format&fit=crop&w=900&q=80" alt="Strawberries" loading="lazy" />
+          </div>
+          <h3 class="mt-4 text-sm font-semibold">Strawberries</h3>
+          <p class="mt-1 text-xs text-ink/60">Sweet • Juicy</p>
+          <button class="mt-4 w-full rounded-full bg-brand-600 px-4 py-2 text-xs font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-brand-700 active:translate-y-0">Add</button>
+        </article>
+
+        <article data-cat="fruits seasonal" class="item group rounded-3xl bg-brand-50 p-5 shadow-sm ring-1 ring-brand-100 transition duration-300 hover:-translate-y-1 hover:shadow-card reveal" data-reveal="scale">
+          <div class="flex items-center justify-between">
+            <span class="rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-ink/70 ring-1 ring-ink/10">Fruits</span>
+            <span class="text-xs font-semibold text-ink/55">$2.49</span>
+          </div>
+          <div class="mt-4 overflow-hidden rounded-2xl bg-white/60 p-3">
+            <img class="h-36 w-full rounded-xl object-cover transition duration-700 group-hover:scale-[1.05]" src="https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?auto=format&fit=crop&w=900&q=80" alt="Apples" loading="lazy" />
+          </div>
+          <h3 class="mt-4 text-sm font-semibold">Fresh Apples</h3>
+          <p class="mt-1 text-xs text-ink/60">Crisp • Sweet</p>
+          <button class="mt-4 w-full rounded-full bg-brand-600 px-4 py-2 text-xs font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-brand-700 active:translate-y-0">Add</button>
+        </article>
+
+        <article data-cat="vegetables organic" class="item group rounded-3xl bg-brand-50 p-5 shadow-sm ring-1 ring-brand-100 transition duration-300 hover:-translate-y-1 hover:shadow-card reveal" data-reveal="scale">
+          <div class="flex items-center justify-between">
+            <span class="rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-ink/70 ring-1 ring-ink/10">Vegetables</span>
+            <span class="text-xs font-semibold text-ink/55">$1.49</span>
+          </div>
+          <div class="mt-4 overflow-hidden rounded-2xl bg-white/60 p-3">
+            <img class="h-36 w-full rounded-xl object-cover transition duration-700 group-hover:scale-[1.05]" src="https://images.unsplash.com/photo-1459411621453-7b03977f4bfc?auto=format&fit=crop&w=900&q=80" alt="Carrots" loading="lazy" />
+          </div>
+          <h3 class="mt-4 text-sm font-semibold">Carrots</h3>
+          <p class="mt-1 text-xs text-ink/60">Crunchy • Fresh</p>
+          <button class="mt-4 w-full rounded-full bg-brand-600 px-4 py-2 text-xs font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-brand-700 active:translate-y-0">Add</button>
+        </article>
+
+        <article data-cat="vegetables seasonal" class="item group rounded-3xl bg-peach-50 p-5 shadow-sm ring-1 ring-peach-100 transition duration-300 hover:-translate-y-1 hover:shadow-card reveal" data-reveal="right">
+          <div class="flex items-center justify-between">
+            <span class="rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-ink/70 ring-1 ring-ink/10">Vegetables</span>
+            <span class="text-xs font-semibold text-ink/55">$1.29</span>
+          </div>
+          <div class="mt-4 overflow-hidden rounded-2xl bg-white/60 p-3">
+            <img class="h-36 w-full rounded-xl object-cover transition duration-700 group-hover:scale-[1.05]" src="https://images.unsplash.com/photo-1514996937319-344454492b37?auto=format&fit=crop&w=900&q=80" alt="Cucumbers" loading="lazy" />
+          </div>
+          <h3 class="mt-4 text-sm font-semibold">Cucumbers</h3>
+          <p class="mt-1 text-xs text-ink/60">Crisp • Hydrating</p>
+          <button class="mt-4 w-full rounded-full bg-brand-600 px-4 py-2 text-xs font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-brand-700 active:translate-y-0">Add</button>
+        </article>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-brand-700 text-white">
+      <div class="mx-auto max-w-6xl px-3 py-8">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div class="text-sm text-white/75">© <span id="year"></span> GOP FARMS</div>
+          <a href="index.html" class="text-sm font-semibold hover:text-white">Back to home →</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.getElementById("year").textContent = new Date().getFullYear();
+
+      // reveal on scroll
+      (function () {
+        const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (reduceMotion) return;
+        const els = Array.from(document.querySelectorAll(".reveal"));
+        if (!els.length) return;
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const e of entries) {
+              if (e.isIntersecting) {
+                e.target.classList.add("is-visible");
+                io.unobserve(e.target);
+              }
+            }
+          },
+          { threshold: 0.12, rootMargin: "0px 0px -8% 0px" }
+        );
+        for (const el of els) io.observe(el);
+      })();
+
+      // filtering
+      (function () {
+        const buttons = Array.from(document.querySelectorAll(".cat-btn"));
+        const items = Array.from(document.querySelectorAll(".item"));
+        const hint = document.getElementById("itemsHint");
+        const search = document.getElementById("search");
+        const jumps = Array.from(document.querySelectorAll("[data-cat-jump]"));
+
+        let activeCat = "all";
+        let query = "";
+
+        function normalize(s) {
+          return (s || "").toLowerCase().trim();
+        }
+
+        function setActiveButton() {
+          for (const b of buttons) {
+            const isActive = (b.getAttribute("data-cat") || "all") === activeCat;
+            b.className =
+              "cat-btn rounded-full px-4 py-2 text-xs font-semibold transition " +
+              (isActive
+                ? "bg-brand-600 text-white shadow-sm"
+                : "border border-ink/10 bg-white text-ink/80 hover:bg-brand-50");
+          }
+        }
+
+        function apply() {
+          const label = activeCat === "all" ? "All" : activeCat[0].toUpperCase() + activeCat.slice(1);
+          if (hint) hint.textContent = `Showing: ${label}`;
+
+          for (const el of items) {
+            const cats = normalize(el.getAttribute("data-cat"));
+            const title = normalize(el.querySelector("h3")?.textContent || "");
+            const sub = normalize(el.querySelector("p")?.textContent || "");
+            const matchesCat = activeCat === "all" ? true : cats.includes(activeCat);
+            const matchesQuery = !query ? true : `${title} ${sub}`.includes(query);
+            el.style.display = matchesCat && matchesQuery ? "" : "none";
+          }
+        }
+
+        for (const b of buttons) {
+          b.addEventListener("click", () => {
+            activeCat = b.getAttribute("data-cat") || "all";
+            setActiveButton();
+            apply();
+          });
+        }
+
+        if (search) {
+          search.addEventListener("input", () => {
+            query = normalize(search.value);
+            apply();
+          });
+        }
+
+        for (const j of jumps) {
+          j.addEventListener("click", () => {
+            const cat = j.getAttribute("data-cat-jump") || "all";
+            activeCat = cat;
+            setActiveButton();
+            apply();
+          });
+        }
+
+        setActiveButton();
+        apply();
+      })();
+    </script>
+  </body>
+</html>
+

@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Greenhouse Monitoring</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  body { font-family: 'Inter', system-ui, sans-serif; }
+  .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 8px; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+</style>
+</head>
+<body class="bg-[#F2F4F1] text-gray-900 antialiased">
+
+<div class="flex h-screen overflow-hidden">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="w-16 bg-white border-r border-gray-100 flex flex-col items-center justify-between py-5 shrink-0">
+    <div class="flex flex-col items-center gap-7">
+      <!-- Logo -->
+      <div class="w-9 h-9 rounded-xl bg-green-500 flex items-center justify-center text-white shadow-sm shadow-green-200">
+        <button onclick="openDashboard()" class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 1.5 3.8 1.5 6 0 4-3.5 7.5-7.5 7.5h-2z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 11 13 11 11"/></svg>
+        </button>
+      </div>
+
+      <nav class="flex flex-col items-center gap-3">
+        <button  onclick="openIndex()" class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition" aria-label="Home">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 9.5V20h14V9.5"/></svg>
+        </button>
+        <button id="navDashboard" onclick="showDashboard()" class="w-10 h-10 rounded-xl bg-gray-900 flex items-center justify-center text-white" aria-label="Dashboard">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        </button>       
+      </nav>
+    </div>
+
+    <div class="flex flex-col items-center gap-4">
+      <button id="navSettings" onclick="showSettings()" class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition" aria-label="Settings">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09A1.65 1.65 0 0 0 15 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+      <div class="w-9 h-9 rounded-full bg-gradient-to-br from-amber-200 to-amber-400 border-2 border-white shadow-sm"></div>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <div class="flex-1 flex flex-col min-w-0">
+
+    <!-- Header -->
+    <header class="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-7 shrink-0">
+      <h1 class="font-semibold text-[17px] text-gray-900">Greenhouse Monitoring</h1>
+
+      <div class="flex items-center gap-3">
+        <div class="relative">
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="text" placeholder="Search" class="w-44 pl-9 pr-3 py-2 text-sm rounded-lg bg-gray-50 border border-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-200" />
+        </div>
+
+        <div class="flex items-center gap-1.5 text-sm text-gray-500 px-1">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+          09:00 am
+        </div>
+
+        <button class="w-9 h-9 rounded-lg flex items-center justify-center text-gray-500 hover:bg-gray-50 transition" aria-label="Refresh">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.36"/><path d="M21 4v5h-5"/></svg>
+        </button>
+
+        <button class="relative w-9 h-9 rounded-lg flex items-center justify-center text-gray-500 hover:bg-gray-50 transition" aria-label="Notifications">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 4 1.5 5.5 1.5 6.5H4.5C4.5 13.5 6 12 6 8Z"/><path d="M9.5 18a2.5 2.5 0 0 0 5 0"/></svg>
+          <span class="absolute top-1.5 right-1.5 w-3.5 h-3.5 bg-red-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center ring-2 ring-white">2</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Body -->
+    <main class="flex-1 overflow-auto scrollbar-thin p-6">
+      <div id="dashboardView">
+      <div class="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-6 items-start">
+
+        <!-- ============ LEFT COLUMN ============ -->
+        <div class="flex flex-col gap-6 min-w-0">
+
+          <!-- Overview card -->
+          <section class="bg-white rounded-2xl border border-gray-100 p-6">
+            <div class="flex items-start justify-between mb-6">
+              <div>
+                <h2 class="text-lg font-semibold text-gray-900">Overview</h2>
+                <p class="text-sm text-gray-400 mt-0.5">Track sales, leads, performance, and customer interactions easily.</p>
+              </div>
+              <button class="flex items-center gap-1.5 text-sm font-medium bg-gray-900 text-white px-3.5 py-2 rounded-lg hover:bg-gray-800 transition shrink-0">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>
+                Export
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <!-- Stat 1 -->
+              <div class="rounded-xl border border-gray-100 p-4">
+                <div class="flex items-center gap-2 mb-4">
+                  <div class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></svg>
+                  </div>
+                  <span class="text-sm text-gray-500">Task Overview</span>
+                </div>
+                <p class="text-3xl font-bold text-gray-900">6</p>
+                <p class="text-xs text-gray-400 mt-1">Total tasks scheduled for today</p>
+              </div>
+              <!-- Stat 2 -->
+              <div class="rounded-xl border border-gray-100 p-4">
+                <div class="flex items-center gap-2 mb-4">
+                  <div class="w-7 h-7 rounded-full bg-green-50 flex items-center justify-center text-green-600">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+                  </div>
+                  <span class="text-sm text-gray-500">Completed Tasks</span>
+                </div>
+                <p class="text-3xl font-bold text-gray-900">3</p>
+                <p class="text-xs text-gray-400 mt-1">Tasks completed successfully so far</p>
+              </div>
+              <!-- Stat 3 -->
+              <div class="rounded-xl border border-gray-100 p-4">
+                <div class="flex items-center gap-2 mb-4">
+                  <div class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+                  </div>
+                  <span class="text-sm text-gray-500">In Progress</span>
+                </div>
+                <p class="text-3xl font-bold text-gray-900">2</p>
+                <p class="text-xs text-gray-400 mt-1">Tasks currently in progress now</p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Board card -->
+          <section class="bg-white rounded-2xl border border-gray-100 p-6">
+            <div class="flex items-center justify-between mb-6">
+              <div class="flex items-center gap-1 bg-gray-50 rounded-lg p-1">
+                <button class="px-3.5 py-1.5 text-sm font-medium rounded-md bg-white text-gray-900 shadow-sm">Board</button>
+                <button class="px-3.5 py-1.5 text-sm font-medium rounded-md text-gray-400 hover:text-gray-600">List</button>
+              </div>
+              <button onclick="openTrackOrder()" class="flex items-center gap-2 text-sm text-gray-600 border border-gray-200 rounded-lg px-3 py-1.5 hover:bg-gray-50 transition">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+                Mon, 22 Jul
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+              <!-- To Do -->
+              <div class="flex flex-col gap-3">
+                <div class="flex items-center justify-between px-1">
+                  <span class="text-sm font-semibold text-gray-700">To Do <span class="text-gray-400 font-normal">2</span></span>
+                  <button class="text-gray-300 hover:text-gray-500"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></button>
+                </div>
+
+                <article class="rounded-xl border border-gray-100 p-4">
+                  <h3 class="text-sm font-semibold text-gray-900">Soil Aeration</h3>
+                  <p class="text-xs text-gray-400 mt-1 leading-relaxed">Loosen soil around the plants carefully without damaging roots.</p>
+                  <div class="flex items-center gap-1.5 text-xs text-gray-400 mt-3">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+                    02:00 PM - 03:00 PM
+                  </div>
+                  <div class="flex items-center gap-1.5 text-xs text-gray-400 mt-1.5">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+                    Due: Sep 10, 2024
+                  </div>
+                </article>
+
+                <article class="rounded-xl border border-gray-100 p-4">
+                  <h3 class="text-sm font-semibold text-gray-900">Mulch Renewal</h3>
+                  <p class="text-xs text-gray-400 mt-1 leading-relaxed">Add organic mulch to stabilize soil moisture levels.</p>
+                  <div class="flex items-center gap-1.5 text-xs text-gray-400 mt-3">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+                    03:00 PM - 03:30 PM
+                  </div>
+                  <div class="flex items-center gap-1.5 text-xs text-gray-400 mt-1.5">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+                    Due: Sep 10, 2024
+                  </div>
+                </article>
+              </div>
+
+              <!-- In Progress -->
+              <div class="flex flex-col gap-3">
+                <div class="flex items-center justify-between px-1">
+                  <span class="text-sm font-semibold text-gray-700">In Progress <span class="text-gray-400 font-normal">2</span></span>
+                  <button class="text-gray-300 hover:text-gray-500"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></button>
+                </div>
+
+                <article class="rounded-xl border border-gray-100 p-4">
+                  <h3 class="text-sm font-semibold text-gray-900">Drip Line Inspection</h3>
+                  <p class="text-xs text-gray-400 mt-1 leading-relaxed">Check drip irrigation lines for leaks and blockages.</p>
+                  <div class="flex items-center gap-1.5 text-xs text-gray-400 mt-3">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+                    02:00 PM - 03:00 PM
+                  </div>
+                  <div class="flex items-center gap-1.5 text-xs text-gray-400 mt-1.5 mb-3">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+                    Due: Sep 10, 2024
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <div class="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div class="h-full bg-green-500 rounded-full" style="width:60%"></div>
+                    </div>
+                    <span class="text-xs font-medium text-gray-500">60%</span>
+                  </div>
+                </article>
+
+                <article class="rounded-xl border border-gray-100 p-4">
+                  <h3 class="text-sm font-semibold text-gray-900">Nutrient Mixing</h3>
+                  <p class="text-xs text-gray-400 mt-1 leading-relaxed">Review fertilizer ratios applied to planting beds.</p>
+                  <div class="flex items-center gap-1.5 text-xs text-gray-400 mt-3">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+                    02:00 PM - 03:00 PM
+                  </div>
+                  <div class="flex items-center gap-1.5 text-xs text-gray-400 mt-1.5 mb-3">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+                    Due: Sep 10, 2024
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <div class="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div class="h-full bg-green-500 rounded-full" style="width:80%"></div>
+                    </div>
+                    <span class="text-xs font-medium text-gray-500">80%</span>
+                  </div>
+                </article>
+              </div>
+
+              <!-- In Review -->
+              <div class="flex flex-col gap-3">
+                <div class="flex items-center justify-between px-1">
+                  <span class="text-sm font-semibold text-gray-700">In Review <span class="text-gray-400 font-normal">1</span></span>
+                  <button class="text-gray-300 hover:text-gray-500"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></button>
+                </div>
+
+                <article class="rounded-xl border border-gray-100 p-4">
+                  <h3 class="text-sm font-semibold text-gray-900">Climate Sensor Calibration</h3>
+                  <p class="text-xs text-gray-400 mt-1 leading-relaxed">Validate temperature and humidity sensor accuracy.</p>
+                  <div class="flex items-center gap-1.5 text-xs text-gray-400 mt-3">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+                    02:00 PM - 03:00 PM
+                  </div>
+                  <div class="flex items-center gap-1.5 text-xs text-gray-400 mt-1.5 mb-3">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+                    Due: Sep 10, 2024
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <div class="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div class="h-full bg-green-500 rounded-full" style="width:92%"></div>
+                    </div>
+                    <span class="text-xs font-medium text-gray-500">92%</span>
+                  </div>
+                </article>
+              </div>
+
+            </div>
+          </section>
+        </div>
+
+        <!-- ============ RIGHT COLUMN ============ -->
+        <div class="flex flex-col gap-6 min-w-0">
+
+          <!-- Crop Progress -->
+          <section class="bg-white rounded-2xl border border-gray-100 p-6">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="text-sm font-semibold text-gray-900">Crop Progress</h3>
+              <button class="text-gray-300 hover:text-gray-500"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></button>
+            </div>
+
+            <div class="relative flex justify-center">
+              <svg id="gauge" width="230" height="135" viewBox="0 0 230 135"></svg>
+              <div class="absolute left-1/2 -translate-x-1/2 bottom-2 text-center">
+                <p class="text-3xl font-bold text-gray-900">81%</p>
+                <p class="text-xs text-gray-400 -mt-0.5">Harvest Completion</p>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-center gap-4 mt-3 flex-wrap">
+              <span class="flex items-center gap-1.5 text-xs text-gray-500"><span class="w-2 h-2 rounded-full bg-green-600"></span>Completed</span>
+              <span class="flex items-center gap-1.5 text-xs text-gray-500"><span class="w-2 h-2 rounded-full bg-green-300"></span>In Progress</span>
+              <span class="flex items-center gap-1.5 text-xs text-gray-500"><span class="w-2 h-2 rounded-full bg-green-100"></span>At Risk</span>
+              <span class="flex items-center gap-1.5 text-xs text-gray-500"><span class="w-2 h-2 rounded-full bg-gray-200"></span>Pending</span>
+            </div>
+          </section>
+
+          <!-- Irrigation Time -->
+          <section class="bg-white rounded-2xl border border-gray-100 p-6">
+            <div class="flex items-center justify-between mb-5">
+              <h3 class="text-sm font-semibold text-gray-900">Irrigation Time</h3>
+              <button class="text-gray-300 hover:text-gray-500"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></button>
+            </div>
+
+            <div class="flex gap-3">
+              <div class="flex flex-col justify-between text-[11px] text-gray-400 h-32 pb-5">
+                <span>11:00</span>
+                <span>09:00</span>
+                <span>08:00</span>
+                <span>07:00</span>
+              </div>
+              <div class="flex-1 flex items-end justify-between gap-2.5 h-32 border-l border-gray-100 pl-3">
+                <div class="flex flex-col items-center gap-2 flex-1">
+                  <div class="w-full max-w-[26px] bg-green-500 rounded-t-md" style="height:70%"></div>
+                  <span class="text-[11px] text-gray-400">Mon</span>
+                </div>
+                <div class="flex flex-col items-center gap-2 flex-1">
+                  <div class="w-full max-w-[26px] bg-green-400 rounded-t-md" style="height:42%"></div>
+                  <span class="text-[11px] text-gray-400">Tue</span>
+                </div>
+                <div class="flex flex-col items-center gap-2 flex-1">
+                  <div class="w-full max-w-[26px] bg-green-400 rounded-t-md" style="height:62%"></div>
+                  <span class="text-[11px] text-gray-400">Wed</span>
+                </div>
+                <div class="flex flex-col items-center gap-2 flex-1">
+                  <div class="w-full max-w-[26px] bg-green-500 rounded-t-md" style="height:95%"></div>
+                  <span class="text-[11px] text-gray-400">Thu</span>
+                </div>
+                <div class="flex flex-col items-center gap-2 flex-1">
+                  <div class="w-full max-w-[26px] bg-green-400 rounded-t-md" style="height:52%"></div>
+                  <span class="text-[11px] text-gray-400">Fri</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Smart Task Update -->
+          <section class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-600 to-green-500 p-6 text-white">
+            <div class="absolute -right-4 -top-4 w-28 h-28 rounded-full bg-white/10"></div>
+            <div class="absolute right-3 bottom-3 text-white/25">
+              <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 1.5 3.8 1.5 6 0 4-3.5 7.5-7.5 7.5h-2z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 11 13 11 11"/></svg>
+            </div>
+            <h3 class="relative font-semibold text-[15px]">Smart Task Update</h3>
+            <p class="relative text-sm text-green-50/90 mt-1.5 leading-relaxed max-w-[200px]">AI tracks, analyzes, and updates task status to improve workflow efficiency.</p>
+            <button class="relative mt-4 bg-white text-green-700 text-sm font-semibold px-4 py-2 rounded-full hover:bg-green-50 transition">Update Now</button>
+          </section>
+
+        </div>
+      </div>
+      </div>
+
+      <!-- ============ SETTINGS / EDIT PROFILE VIEW ============ -->
+      <div id="settingsView" class="hidden">
+        <div class="bg-white rounded-2xl border border-gray-100 p-7">
+
+          <!-- Tabs -->
+          <div class="flex items-center gap-8 border-b border-gray-100 mb-8">
+            <button class="text-sm font-semibold text-blue-600 pb-3 border-b-2 border-blue-600 -mb-px">Edit Profile</button>
+            <button class="text-sm font-medium text-gray-400 pb-3 hover:text-gray-600">Preferences</button>
+            <button class="text-sm font-medium text-gray-400 pb-3 hover:text-gray-600">Security</button>
+          </div>
+
+          <div class="flex flex-col lg:flex-row gap-10">
+            <!-- Avatar -->
+            <div class="shrink-0">
+              <div class="relative w-28 h-28">
+                <div class="w-28 h-28 rounded-full bg-gradient-to-br from-amber-200 via-rose-200 to-amber-300 flex items-center justify-center text-2xl font-bold text-white shadow-sm">
+                  HK
+                </div>
+                <button class="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-blue-600 border-[3px] border-white flex items-center justify-center text-white hover:bg-blue-700 transition" aria-label="Change photo">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Form -->
+            <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
+              <div>
+                <label class="block text-sm text-gray-700 mb-1.5">Your Name</label>
+                <input type="text" value="Harper Kim" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300" />
+              </div>
+              <div>
+                <label class="block text-sm text-gray-700 mb-1.5">User Name</label>
+                <input type="text" value="HarperKimsWorld" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300" />
+              </div>
+
+              <div>
+                <label class="block text-sm text-gray-700 mb-1.5">Email</label>
+                <input type="email" value="harper_kim@example.com" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300" />
+              </div>
+              <div>
+                <label class="block text-sm text-gray-700 mb-1.5">Password</label>
+                <input type="password" value="123456789" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300" />
+              </div>
+
+              <div>
+                <label class="block text-sm text-gray-700 mb-1.5">Date of Birth</label>
+                <input type="text" value="January 1, 1987" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300" />
+              </div>
+              <div>
+                <label class="block text-sm text-gray-700 mb-1.5">Present Address</label>
+                <input type="text" value="Los Angeles, California, USA" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300" />
+              </div>
+
+              <div>
+                <label class="block text-sm text-gray-700 mb-1.5">Permanent Address</label>
+                <input type="text" value="1234 Main Street, Los Angeles, CA 90001" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300" />
+              </div>
+              <div>
+                <label class="block text-sm text-gray-700 mb-1.5">City</label>
+                <input type="text" value="Los Angeles" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300" />
+              </div>
+
+              <div>
+                <label class="block text-sm text-gray-700 mb-1.5">Postal Code</label>
+                <input type="text" value="90012" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300" />
+              </div>
+              <div>
+                <label class="block text-sm text-gray-700 mb-1.5">Country</label>
+                <input type="text" value="USA" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300" />
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-end mt-8">
+            <button class="bg-blue-600 hover:bg-blue-700 transition text-white text-sm font-semibold px-8 py-3 rounded-xl">Save</button>
+          </div>
+
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+  // Build the radial "Crop Progress" gauge
+  (function () {
+    const svg = document.getElementById('gauge');
+    const cx = 115, cy = 118, rInner = 62, rOuter = 80;
+    const totalTicks = 32;
+    for (let i = 0; i < totalTicks; i++) {
+      const t = i / (totalTicks - 1);
+      const angle = 180 - t * 180; // sweep left to right across the top
+      const rad = (angle * Math.PI) / 180;
+      const x1 = cx + rInner * Math.cos(rad);
+      const y1 = cy - rInner * Math.sin(rad);
+      const x2 = cx + rOuter * Math.cos(rad);
+      const y2 = cy - rOuter * Math.sin(rad);
+
+      let color;
+      if (t <= 0.60) color = '#16A34A';
+      else if (t <= 0.81) color = '#4ADE80';
+      else if (t <= 0.90) color = '#BBF7D0';
+      else color = '#E5E7EB';
+
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', x1);
+      line.setAttribute('y1', y1);
+      line.setAttribute('x2', x2);
+      line.setAttribute('y2', y2);
+      line.setAttribute('stroke', color);
+      line.setAttribute('stroke-width', '7');
+      line.setAttribute('stroke-linecap', 'round');
+      svg.appendChild(line);
+    }
+  })();
+</script>
+
+<!-- ============ TRACK ORDER MODAL ============ -->
+<div id="trackOrderModal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+  <div class="bg-white rounded-3xl w-full max-w-md p-7 max-h-[92vh] overflow-y-auto scrollbar-thin">
+
+    <!-- Header -->
+    <div class="flex items-start justify-between mb-5">
+      <div>
+        <h2 class="text-lg font-bold text-gray-900">Track order #302011</h2>
+        <p class="text-sm text-gray-400 mt-0.5">Tracking number #4221736293 ( FedEx)</p>
+      </div>
+      <button onclick="closeTrackOrder()" class="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition shrink-0" aria-label="Close">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <!-- Status row -->
+    <div class="border border-gray-100 rounded-2xl p-4 flex items-center justify-between gap-3 flex-wrap mb-4">
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-green-600 shrink-0">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M3.3 7 12 12l8.7-5"/><path d="M12 22V12"/></svg>
+        </div>
+        <div>
+          <p class="text-[11px] text-gray-400">Status</p>
+          <p class="text-sm font-semibold text-gray-900">In transit</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 shrink-0">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+        </div>
+        <div>
+          <p class="text-[11px] text-gray-400">Estimated delivery date</p>
+          <p class="text-sm font-semibold text-gray-900">Oct 27, 2024</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 shrink-0">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.36"/><path d="M21 4v5h-5"/></svg>
+        </div>
+        <div>
+          <p class="text-[11px] text-gray-400">Last updated</p>
+          <p class="text-sm font-semibold text-gray-900">Oct 23, 2024</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shipping route -->
+    <div class="border border-gray-100 rounded-2xl p-4 mb-4">
+      <p class="text-sm font-semibold text-gray-900 mb-4">Shipping route (FedEx)</p>
+      <div class="flex items-center justify-between gap-3">
+        <div>
+          <p class="text-[11px] text-gray-400">From</p>
+          <p class="text-sm font-medium text-gray-900">Imo, Owerri</p>
+        </div>
+        <div class="flex-1 relative h-5 flex items-center px-2">
+          <div class="w-full h-px bg-blue-200"></div>
+          <div class="absolute left-1/2 -translate-x-1/2 bg-white px-1 text-blue-500">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11v8H3z"/><path d="M14 11h4l3 3v3h-7"/><circle cx="7" cy="17" r="1.5"/><circle cx="17" cy="17" r="1.5"/></svg>
+          </div>
+        </div>
+        <div class="text-right">
+          <p class="text-[11px] text-gray-400">To</p>
+          <p class="text-sm font-medium text-gray-900">Lekki, Lagos</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tracking history -->
+    <div class="border border-gray-100 rounded-2xl p-4 mb-6">
+      <p class="text-sm font-semibold text-gray-900 mb-4">Tracking history</p>
+
+      <div class="flex gap-3">
+        <div class="flex flex-col items-center">
+          <div class="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center text-white shrink-0">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+          </div>
+          <div class="w-0.5 flex-1 bg-green-500 my-1"></div>
+        </div>
+        <div class="pb-5">
+          <p class="text-sm font-semibold text-gray-900">Packaging</p>
+          <p class="text-xs text-gray-400 mt-0.5">Package arrived at sorting facility</p>
+          <p class="text-xs text-gray-400">Imo, Owerri</p>
+          <p class="text-xs text-gray-400">21 Oct, 2024</p>
+        </div>
+      </div>
+
+      <div class="flex gap-3">
+        <div class="flex flex-col items-center">
+          <div class="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center text-white shrink-0">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+          </div>
+          <div class="w-0.5 flex-1 bg-gray-200 my-1"></div>
+        </div>
+        <div class="pb-5">
+          <p class="text-sm font-semibold text-gray-900">Shipped</p>
+          <p class="text-xs text-gray-400 mt-0.5">Package arrived at shipping facility</p>
+          <p class="text-xs text-gray-400">Owerri hub</p>
+          <p class="text-xs text-gray-400">23 Oct, 2024</p>
+        </div>
+      </div>
+
+      <div class="flex gap-3">
+        <div class="flex flex-col items-center">
+          <div class="w-5 h-5 rounded-full bg-gray-200 shrink-0"></div>
+          <div class="w-0.5 flex-1 bg-gray-200 my-1"></div>
+        </div>
+        <div class="pb-5">
+          <p class="text-sm text-gray-400">Left shipping facility</p>
+          <p class="text-xs text-gray-400 mt-0.5">Package enroute lagos</p>
+          <p class="text-xs text-gray-400">In transit</p>
+          <p class="text-xs text-gray-400">24 Oct, 2024</p>
+        </div>
+      </div>
+
+      <div class="flex gap-3">
+        <div class="flex flex-col items-center">
+          <div class="w-5 h-5 rounded-full bg-gray-200 shrink-0"></div>
+        </div>
+        <div>
+          <p class="text-sm text-gray-400">Delivered</p>
+          <p class="text-xs text-gray-400 mt-0.5">Package in lagos</p>
+          <p class="text-xs text-gray-400">27 Oct, 2024</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex items-center gap-3">
+      <button onclick="closeTrackOrder()" class="flex-1 border border-gray-200 rounded-full py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition">Cancel</button>
+      <button class="flex-1 bg-gray-900 text-white rounded-full py-2.5 text-sm font-semibold hover:bg-gray-800 transition">Contact carrier</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function openTrackOrder() {
+    document.getElementById('trackOrderModal').classList.remove('hidden');
+  }
+  function closeTrackOrder() {
+    document.getElementById('trackOrderModal').classList.add('hidden');
+  }
+  document.getElementById('trackOrderModal').addEventListener('click', function (e) {
+    if (e.target === this) closeTrackOrder();
+  });
+  function openIndex(){
+    window.location.href = "{% url 'home' %}";
+  }
+    function openDashboard(){
+    window.location.href = "{% url 'dashboard' %}";
+  }
+  // Switch between the dashboard and the settings / edit profile view
+  function showSettings() {
+    document.getElementById('dashboardView').classList.add('hidden');
+    document.getElementById('settingsView').classList.remove('hidden');
+    setActiveNav('navSettings');
+  }
+  function showDashboard() {
+    document.getElementById('settingsView').classList.add('hidden');
+    document.getElementById('dashboardView').classList.remove('hidden');
+    setActiveNav('navDashboard');
+  }
+  function setActiveNav(activeId) {
+    ['navDashboard', 'navSettings'].forEach(function (id) {
+      const btn = document.getElementById(id);
+      if (id === activeId) {
+        btn.classList.add('bg-gray-900', 'text-white');
+        btn.classList.remove('text-gray-400');
+      } else {
+        btn.classList.remove('bg-gray-900', 'text-white');
+        btn.classList.add('text-gray-400');
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
