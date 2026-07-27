@@ -279,7 +279,13 @@
 
     <!-- Header -->
     <header class="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-7 shrink-0 anim-fade relative z-30">
-      <h1 class="font-semibold text-[17px] text-gray-900">Greenhouse Monitoring</h1>
+      <h1 class="font-semibold text-[17px] text-gray-900">
+        {% if user and user.first_name %}
+          Hey, {{ user.first_name }}
+        {% else %}
+          Greenhouse Monitoring
+        {% endif %}
+      </h1>
 
       <div class="flex items-center gap-3">
         <div class="relative">
@@ -633,6 +639,7 @@
       <!-- ============ SETTINGS / EDIT PROFILE VIEW ============ -->
       <div id="settingsView" class="hidden">
         <div class="bg-white rounded-2xl border border-gray-100 p-7">
+          <form method="post" action="/dashboard/" class="space-y-8">
 
           <!-- Tabs -->
           <div class="flex items-center gap-8 border-b border-gray-100 mb-8">
@@ -647,7 +654,7 @@
             <div class="shrink-0">
               <div class="relative w-28 h-28">
                 <div class="w-28 h-28 rounded-full bg-gradient-to-br from-amber-200 via-rose-200 to-amber-300 flex items-center justify-center text-2xl font-bold text-white shadow-sm">
-                  HK
+                  {{ (user.first_name|default('H'))[:1] }}{{ (user.last_name|default('K'))[:1] }}
                 </div>
                 <button class="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-blue-600 border-[3px] border-white flex items-center justify-center text-white hover:bg-blue-700 transition" aria-label="Change photo">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
@@ -659,60 +666,57 @@
             <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
               <div>
                 <label class="block text-sm text-gray-700 mb-1.5">Your Name</label>
-                <input type="text" value="Harper Kim" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-shadow" />
+                <input name="full_name" type="text" value="{{ user.first_name|default('') }} {{ user.last_name|default('') }}" class="w-full px-4 py-3 text-sm text-gray-700 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-shadow" />
               </div>
               <div>
                 <label class="block text-sm text-gray-700 mb-1.5">User Name</label>
-                <input type="text" value="HarperKimsWorld" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-shadow" />
+                <input type="text" value="{{ user.username|default('') }}" disabled class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-shadow" />
               </div>
 
               <div>
                 <label class="block text-sm text-gray-700 mb-1.5">Email</label>
-                <input type="email" value="harper_kim@example.com" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-shadow" />
+                <input type="hidden" name="email" value="{{ user.email|default('') }}" />
+                <input aria-hidden="true" type="email" value="{{ user.email|default('') }}" disabled class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 bg-gray-50 cursor-not-allowed" />
               </div>
               <div>
                 <label class="block text-sm text-gray-700 mb-1.5">Password</label>
-                <input type="password" value="123456789" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-shadow" />
+                <input name="password" type="password" placeholder="Set a password to enable email login" class="w-full px-4 py-3 text-sm text-gray-700 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-shadow" />
               </div>
 
               <div>
-                <label class="block text-sm text-gray-700 mb-1.5">Date of Birth</label>
-                <input type="text" value="January 1, 1987" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-shadow" />
-              </div>
-              <div>
-                <label class="block text-sm text-gray-700 mb-1.5">Present Address</label>
-                <input type="text" value="Los Angeles, California, USA" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-shadow" />
-              </div>
-
-              <div>
-                <label class="block text-sm text-gray-700 mb-1.5">Permanent Address</label>
-                <input type="text" value="1234 Main Street, Los Angeles, CA 90001" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-shadow" />
+                <label class="block text-sm text-gray-700 mb-1.5">Location</label>
+                <input name="location" type="text" value="{{ profile.location|default('') }}" class="w-full px-4 py-3 text-sm text-gray-700 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-shadow" />
               </div>
               <div>
                 <label class="block text-sm text-gray-700 mb-1.5">City</label>
-                <input type="text" value="Los Angeles" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-shadow" />
+                <input name="city" type="text" value="{{ profile.city|default('') }}" class="w-full px-4 py-3 text-sm text-gray-700 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-shadow" />
               </div>
 
               <div>
-                <label class="block text-sm text-gray-700 mb-1.5">Postal Code</label>
-                <input type="text" value="90012" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-shadow" />
-              </div>
-              <div>
                 <label class="block text-sm text-gray-700 mb-1.5">Country</label>
-                <input type="text" value="USA" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-shadow" />
+                <input name="country" type="text" value="{{ profile.country|default(detected_country) }}" class="w-full px-4 py-3 text-sm text-gray-700 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-shadow" />
               </div>
             </div>
           </div>
 
           <div class="flex justify-end mt-8">
-            <button class="bg-blue-600 hover:bg-blue-700 transition text-white text-sm font-semibold px-8 py-3 rounded-xl">Save</button>
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 transition text-white text-sm font-semibold px-8 py-3 rounded-xl">Save</button>
           </div>
+          </form>
           </div>
           <!-- ===== /Profile panel ===== -->
 
           <!-- ===== Preferences panel ===== -->
           <div id="preferencesPanel" class="hidden">
             <div class="max-w-2xl flex flex-col gap-8">
+              <div class="rounded-2xl border border-gray-100 p-6 bg-gray-50">
+                <p class="text-sm font-semibold text-gray-900 mb-2">Account type</p>
+                <p class="text-sm text-gray-500 mb-4">Switch between customer and seller dashboards.</p>
+                <form method="post" action="/account/role" class="inline-flex gap-3">
+                  <input type="hidden" name="target_type" value="seller" />
+                  <button type="submit" class="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-green-600 text-white text-sm font-semibold hover:bg-green-700 transition">Switch to Seller</button>
+                </form>
+              </div>
 
               <!-- Appearance -->
               <div>
@@ -1259,10 +1263,10 @@
     if (e.target === this) closeTrackOrder();
   });
   function openIndex(){
-    window.location.href = "{% url 'home' %}";
+    window.location.href = "{{ request.url_for('home') }}";
   }
     function openDashboard(){
-    window.location.href = "{% url 'dashboard' %}";
+    window.location.href = "{{ request.url_for('dashboard') }}";
   }
   // Switch between the dashboard and the settings / edit profile view
   function showSettings() {

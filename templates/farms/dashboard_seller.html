@@ -180,11 +180,6 @@
           Sell a product
         </button>
 
-        <button class="relative w-9 h-9 rounded-lg flex items-center justify-center text-gray-500 hover:bg-gray-50 transition" aria-label="Cart">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
-          <span id="cartBadge" class="hidden absolute top-1 right-1 w-3.5 h-3.5 bg-green-600 text-white text-[8px] font-bold rounded-full flex items-center justify-center ring-2 ring-white">0</span>
-        </button>
-
         <button class="relative w-9 h-9 rounded-lg flex items-center justify-center text-gray-500 hover:bg-gray-50 transition" aria-label="Notifications">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 4 1.5 5.5 1.5 6.5H4.5C4.5 13.5 6 12 6 8Z"/><path d="M9.5 18a2.5 2.5 0 0 0 5 0"/></svg>
           <span class="absolute top-1.5 right-1.5 w-3.5 h-3.5 bg-red-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center ring-2 ring-white badge-bounce">2</span>
@@ -268,21 +263,21 @@
       <section class="bg-white rounded-2xl border border-gray-100 p-6 mb-6 anim-fade-up delay-1">
         <div class="flex items-start justify-between gap-4 flex-wrap">
           <div class="flex items-center gap-4">
-            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-200 via-rose-200 to-amber-300 flex items-center justify-center text-xl font-bold text-white shadow-sm shrink-0">{{ seller_initials|default:"HK" }}</div>
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-200 via-rose-200 to-amber-300 flex items-center justify-center text-xl font-bold text-white shadow-sm shrink-0">{{ seller_initials|default('HK') }}</div>
             <div>
               <div class="flex items-center gap-2">
-                <h2 class="text-lg font-semibold text-gray-900">{{ seller_name|default:"Harper Kim" }}'s Shop</h2>
+                <h2 class="text-lg font-semibold text-gray-900">{{ seller_name|default('Harper Kim') }}'s Shop</h2>
                 <span class="flex items-center gap-1 text-[11px] font-semibold bg-green-50 text-green-700 px-2 py-0.5 rounded-full">
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
                   Verified seller
                 </span>
               </div>
-              <p class="text-sm text-gray-400 mt-0.5">{{ seller_location|default:"Lilongwe, Central Region" }} · Member since {{ member_since|default:"Jan 2024" }}</p>
+              <p class="text-sm text-gray-400 mt-0.5">{{ seller_location|default('Lilongwe, Central Region') }} · Member since {{ member_since|default('Jan 2024') }}</p>
             </div>
           </div>
           <button onclick="openSellModal()" class="flex items-center gap-1.5 text-sm font-semibold bg-green-600 text-white px-3.5 py-2 rounded-lg hover:bg-green-700 transition btn-primary shrink-0">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-            Add new item
+            Add new item now
           </button>
         </div>
       </section>
@@ -371,7 +366,7 @@
           </div>
           <p class="text-sm font-medium text-gray-500">You haven't listed anything yet</p>
           <p class="text-xs text-gray-400 mt-1 mb-4">Add your first product to start selling</p>
-          <button onclick="openSellModal()" class="text-sm font-semibold bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition btn-primary">Add new item</button>
+          <button onclick="openSellModal()" class="text-sm font-semibold bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition btn-primary">Add new item now</button>
         </div>
       </section>
     </div>
@@ -390,42 +385,56 @@
 
         <!-- Edit Profile Tab -->
         <div id="panelEditProfile" class="view-transition">
-          <div class="flex flex-col lg:flex-row gap-10">
-            <div class="shrink-0">
-              <div class="relative w-28 h-28">
-                <div class="w-28 h-28 rounded-full bg-gradient-to-br from-amber-200 via-rose-200 to-amber-300 flex items-center justify-center text-2xl font-bold text-white shadow-sm hover-lift cursor-pointer">HK</div>
-                <button class="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-blue-600 border-[3px] border-white flex items-center justify-center text-white hover:bg-blue-700 transition btn-primary" aria-label="Change photo">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
-                </button>
+          <form method="post" action="" class="flex flex-col gap-8">
+            <div class="flex flex-col lg:flex-row gap-10">
+              <div class="shrink-0">
+                <div class="relative w-28 h-28">
+                  <div class="w-28 h-28 rounded-full bg-gradient-to-br from-amber-200 via-rose-200 to-amber-300 flex items-center justify-center text-2xl font-bold text-white shadow-sm hover-lift cursor-pointer">{{ seller_initials|default('HK') }}</div>
+                  <button type="button" class="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-blue-600 border-[3px] border-white flex items-center justify-center text-white hover:bg-blue-700 transition btn-primary" aria-label="Change photo">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                  </button>
+                </div>
               </div>
-            </div>
 
-            <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
-              <div class="anim-fade-up delay-1"><label class="block text-sm text-gray-700 mb-1.5">Your Name</label><input type="text" value="Harper Kim" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition" /></div>
-              <div class="anim-fade-up delay-2"><label class="block text-sm text-gray-700 mb-1.5">Shop Name</label><input type="text" value="Harper Kim's Shop" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition" /></div>
-              <div class="anim-fade-up delay-3"><label class="block text-sm text-gray-700 mb-1.5">Email</label><input type="email" value="harper_kim@example.com" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition" /></div>
-              <div class="anim-fade-up delay-4"><label class="block text-sm text-gray-700 mb-1.5">Password</label><input type="password" value="123456789" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition" /></div>
-              <div class="anim-fade-up delay-4"><label class="block text-sm text-gray-700 mb-1.5">Phone</label><input type="text" value="+265 99 123 4567" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition" /></div>
-              <div class="anim-fade-up delay-5"><label class="block text-sm text-gray-700 mb-1.5">Pickup Location</label><input type="text" value="Lilongwe, Central Region" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition" /></div>
-              <div class="anim-fade-up delay-5"><label class="block text-sm text-gray-700 mb-1.5">Payout Method</label>
-                <select class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition bg-white">
-                  <option>Mobile money</option>
-                  <option>Bank transfer</option>
-                  <option>Cash on pickup</option>
-                </select>
+              <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
+                <div class="anim-fade-up delay-1"><label class="block text-sm text-gray-700 mb-1.5">Your Name</label><input name="full_name" type="text" value="{{ user.first_name|default('') }} {{ user.last_name|default('') }}" class="w-full px-4 py-3 text-sm text-gray-700 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition" /></div>
+                <div class="anim-fade-up delay-2"><label class="block text-sm text-gray-700 mb-1.5">Shop Name</label><input name="shop_name" type="text" value="{{ profile.shop_name|default('') }}" class="w-full px-4 py-3 text-sm text-gray-700 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition" /></div>
+                <div class="anim-fade-up delay-3">
+                  <label class="block text-sm text-gray-700 mb-1.5">Email</label>
+                  <input type="hidden" name="email" value="{{ user.email|default('') }}" />
+                  <input aria-hidden="true" type="email" value="{{ user.email|default('') }}" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 bg-gray-50 cursor-not-allowed" disabled />
+                </div>
+                <div class="anim-fade-up delay-4"><label class="block text-sm text-gray-700 mb-1.5">Phone</label><input name="phone" type="text" value="{{ profile.phone|default('') }}" class="w-full px-4 py-3 text-sm text-gray-700 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition" /></div>
+                <div class="anim-fade-up delay-5"><label class="block text-sm text-gray-700 mb-1.5">Pickup Location</label><input name="location" type="text" value="{{ profile.location|default('') }}" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition" /></div>
+                <div class="anim-fade-up delay-5"><label class="block text-sm text-gray-700 mb-1.5">Payout Method</label>
+                  <select name="payout_method" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition bg-white">
+                    <option value="Mobile money" {% if profile.payout_method == "Mobile money" %}selected{% endif %}>Mobile money</option>
+                    <option value="Bank transfer" {% if profile.payout_method == "Bank transfer" %}selected{% endif %}>Bank transfer</option>
+                    <option value="Cash on pickup" {% if profile.payout_method == "Cash on pickup" %}selected{% endif %}>Cash on pickup</option>
+                  </select>
+                </div>
+                <div class="anim-fade-up delay-6"><label class="block text-sm text-gray-700 mb-1.5">City</label><input name="city" type="text" value="{{ profile.city|default('') }}" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition" /></div>
+                <div class="anim-fade-up delay-6"><label class="block text-sm text-gray-700 mb-1.5">Country</label><input name="country" type="text" value="{{ profile.country|default(detected_country) }}" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition" /></div>
+                <div class="anim-fade-up delay-7"><label class="block text-sm text-gray-700 mb-1.5">Password (optional)</label><input name="password" type="password" placeholder="Set a password to enable email login" class="w-full px-4 py-3 text-sm text-gray-700 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition" /></div>
               </div>
-              <div class="anim-fade-up delay-6"><label class="block text-sm text-gray-700 mb-1.5">City</label><input type="text" value="Lilongwe" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition" /></div>
-              <div class="anim-fade-up delay-6"><label class="block text-sm text-gray-700 mb-1.5">Country</label><input type="text" value="Malawi" class="w-full px-4 py-3 text-sm text-gray-500 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition" /></div>
             </div>
-          </div>
-          <div class="flex justify-end mt-8">
-            <button onclick="showToast('Profile saved')" class="bg-blue-600 hover:bg-blue-700 transition text-white text-sm font-semibold px-8 py-3 rounded-xl btn-primary">Save</button>
-          </div>
+            <div class="flex justify-end mt-8">
+              <button type="submit" class="bg-blue-600 hover:bg-blue-700 transition text-white text-sm font-semibold px-8 py-3 rounded-xl btn-primary">Save</button>
+            </div>
+          </form>
         </div>
 
         <!-- Preferences Tab -->
         <div id="panelPreferences" class="hidden view-transition">
           <div class="max-w-2xl flex flex-col gap-8">
+            <div class="rounded-2xl border border-gray-100 p-6 bg-gray-50">
+              <p class="text-sm font-semibold text-gray-900 mb-2">Account type</p>
+              <p class="text-sm text-gray-500 mb-4">Switch your account back to customer mode and view the customer dashboard.</p>
+              <form method="post" action="/account/role" class="inline-flex gap-3">
+                <input type="hidden" name="target_type" value="customer" />
+                <button type="submit" class="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition">Switch to Customer</button>
+              </form>
+            </div>
 
             <div>
               <h3 class="text-sm font-semibold text-gray-900 mb-1">Appearance</h3>
@@ -518,7 +527,8 @@
               </div>
             </div>
 
-            <div class="flex justify-end">
+            <div class="flex flex-col sm:flex-row justify-end gap-3 mt-8">
+              <a href="{{ request.url_for('dashboard') }}" class="inline-flex items-center justify-center bg-white border border-gray-200 text-gray-700 text-sm font-semibold px-8 py-3 rounded-xl hover:bg-gray-50 transition">Switch to buyer dashboard</a>
               <button onclick="showToast('Preferences saved')" class="bg-blue-600 hover:bg-blue-700 transition text-white text-sm font-semibold px-8 py-3 rounded-xl btn-primary">Save preferences</button>
             </div>
           </div>
@@ -573,7 +583,7 @@
                 </div>
                 <span class="text-sm font-semibold text-gray-700 group-hover:text-green-700 transition">National ID</span>
               </button>
-              <button onclick="chooseIdType(&quot;Driver's License&quot;)" class="border-2 border-gray-100 rounded-2xl p-5 flex flex-col items-center gap-3 hover:border-green-400 hover:bg-green-50 transition-all group hover-lift">
+              <button onclick="chooseIdType('Driver\'s License')" class="border-2 border-gray-100 rounded-2xl p-5 flex flex-col items-center gap-3 hover:border-green-400 hover:bg-green-50 transition-all group hover-lift">
                 <div class="w-12 h-12 rounded-xl bg-gray-100 group-hover:bg-green-100 flex items-center justify-center transition">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#374151" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M8 10h8M8 14h5"/><circle cx="17" cy="14" r="1.5"/></svg>
                 </div>
@@ -590,7 +600,7 @@
             </div>
             <div class="max-w-sm mx-auto">
               <label id="uploadFrontArea" class="block border-2 border-dashed border-gray-200 rounded-2xl p-8 cursor-pointer hover:border-green-400 hover:bg-green-50/40 transition-all group relative overflow-hidden" style="min-height:180px">
-                <input type="file" accept="image/*" class="sr-only" onchange="handleVerifyUpload(this,'front')">
+                <input type="file" accept="image/*" class="sr-only" onchange='handleVerifyUpload(this,"front")'>
                 <div id="uploadFrontPlaceholder" class="flex flex-col items-center gap-3 text-center">
                   <div class="w-14 h-14 rounded-xl bg-gray-100 group-hover:bg-green-100 flex items-center justify-center transition anim-float">
                     <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
@@ -751,8 +761,8 @@
     <!-- Form header -->
     <div class="flex items-start justify-between p-6 pb-0">
       <div>
-        <h2 class="text-lg font-bold text-gray-900">List a product</h2>
-        <p class="text-sm text-gray-400 mt-0.5">Sell directly to buyers — agricultural products only</p>
+        <h2 id="sellModalTitle" class="text-lg font-bold text-gray-900">List a product</h2>
+        <p id="sellModalDescription" class="text-sm text-gray-400 mt-0.5">Sell directly to buyers — agricultural products only</p>
       </div>
       <button onclick="closeSellModal()" class="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition btn-primary shrink-0" aria-label="Close">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
@@ -841,7 +851,7 @@
 
         <div class="flex gap-3">
           <button type="button" onclick="closeSellModal()" class="flex-1 border border-gray-200 rounded-xl py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition btn-primary">Cancel</button>
-          <button type="submit" class="flex-1 bg-green-600 text-white rounded-xl py-3 text-sm font-semibold hover:bg-green-700 transition btn-primary">Publish listing</button>
+          <button id="sellSubmitButton" type="submit" class="flex-1 bg-green-600 text-white rounded-xl py-3 text-sm font-semibold hover:bg-green-700 transition btn-primary">Publish listing</button>
         </div>
       </form>
     </div>
@@ -879,22 +889,26 @@
   </div>
 </div>
 
-{{ products|json_script:"products-data" }}
-{{ user_products|json_script:"user-products-data" }}
+<script id="products-data" type="application/json">{{ products | tojson | safe }}</script>
+<script id="user-products-data" type="application/json">{{ user_products | tojson | safe }}</script>
 
 <script>
   /* ── Nav placeholders ── */
-  function openIndex()    { /* window.location.href = "{% url 'home' %}"; */ }
-  function openDashboard(){ /* window.location.href = "{% url 'dashboard' %}"; */ }
+  function openIndex()    { /* window.location.href = "/"; */ }
+  function openDashboard(){ window.location.href = "/dashboard"; }
 
   /* ── Seed data ── */
   const seedProducts = JSON.parse(document.getElementById('products-data').textContent);
   let userProducts = JSON.parse(document.getElementById('user-products-data').textContent);
   let activeCategory = 'all';
-  let nextId = {{ next_id }};
+  let nextId = {{ next_id | default(0) }};
+  let editingProductId = null;
+  let editingProductImageUrl = null;
 
   /* ── Render ── */
-  function getAllProducts() { return [...userProducts, ...seedProducts]; }
+  function getAllProducts() {
+    return [...userProducts];
+  }
 
   function filterProducts() {
     renderProducts();
@@ -1002,8 +1016,8 @@
         </div>
 
         <div class="flex gap-3">
-          <button onclick="contactSeller('${escapeHtml(p.seller)}')" class="flex-1 border border-gray-200 rounded-xl py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition btn-primary">Message seller</button>
-          <button onclick="addToCart(${p.id})" class="flex-1 bg-green-600 text-white rounded-xl py-3 text-sm font-semibold hover:bg-green-700 transition btn-primary">Add to cart</button>
+          <button onclick="updateProduct(${p.id})" class="flex-1 border border-gray-200 rounded-xl py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition btn-primary">Update item</button>
+          <button onclick="deleteProduct(${p.id})" class="flex-1 bg-red-600 text-white rounded-xl py-3 text-sm font-semibold hover:bg-red-700 transition btn-primary">Delete item</button>
         </div>
       </div>
     `;
@@ -1012,19 +1026,31 @@
   function closeDetail() { document.getElementById('detailModal').classList.add('hidden'); }
   document.getElementById('detailModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeDetail(); });
 
-  /* ── Cart + toast ── */
-  let cartCount = 0;
-  function addToCart(id) {
-    cartCount++;
-    const badge = document.getElementById('cartBadge');
-    badge.textContent = cartCount;
-    badge.classList.remove('hidden');
-    showToast('Added to cart');
-    closeDetail();
-  }
+  /* ── Toast ── */
   function contactSeller(name) {
     showToast(`Message sent to ${name}`);
   }
+
+  function updateProduct(id) {
+    closeDetail();
+    openSellModal(id);
+  }
+
+  async function deleteProduct(id) {
+    if (!confirm('Delete this item from your shop?')) return;
+    const response = await fetch(`/api/products/${id}`, { method: 'DELETE' });
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      showToast(error.detail || 'Failed to delete item');
+      return;
+    }
+    userProducts = userProducts.filter(p => p.id !== id);
+    closeDetail();
+    renderProducts();
+    renderShopTable();
+    showToast('Item deleted successfully');
+  }
+
   function showToast(msg) {
     const toast = document.getElementById('toast');
     document.getElementById('toastMsg').textContent = msg;
@@ -1035,16 +1061,51 @@
   }
 
   /* ── Sell modal ── */
-  function openSellModal() {
-    document.getElementById('sellModal').classList.remove('hidden');
-    document.getElementById('sellFormView').classList.remove('hidden');
-    document.getElementById('sellSuccessView').classList.add('hidden');
-  }
   function closeSellModal() {
     document.getElementById('sellModal').classList.add('hidden');
     resetSellForm();
   }
   document.getElementById('sellModal').addEventListener('click', e => { if (e.target === e.currentTarget) closeSellModal(); });
+
+  function openSellModal(productId = null) {
+    resetSellForm();
+    editingProductId = productId;
+    const titleEl = document.getElementById('sellModalTitle');
+    const descEl = document.getElementById('sellModalDescription');
+    const submitButton = document.getElementById('sellSubmitButton');
+
+    if (productId) {
+      const product = userProducts.find(p => p.id === productId);
+      if (!product) return;
+      titleEl.textContent = 'Update product';
+      descEl.textContent = 'Edit your product details and save changes';
+      submitButton.textContent = 'Save changes';
+      document.getElementById('fieldTitle').value = product.title || '';
+      document.getElementById('fieldCategory').value = product.category || '';
+      document.getElementById('fieldPrice').value = product.price || '';
+      document.getElementById('fieldUnit').value = product.unit || 'kg';
+      document.getElementById('fieldQty').value = product.qty || '';
+      document.getElementById('fieldDescription').value = product.desc || '';
+      document.getElementById('fieldLocation').value = product.location || '';
+      const photoPreview = document.getElementById('photoPreview');
+      photoPreview.src = product.img || '';
+      if (product.img) {
+        photoPreview.classList.remove('hidden');
+        document.getElementById('photoPlaceholder').classList.add('hidden');
+        document.getElementById('dropzone').classList.remove('dropzone');
+      }
+      editingProductImageUrl = product.img || null;
+    } else {
+      titleEl.textContent = 'List a product';
+      descEl.textContent = 'Sell directly to buyers — agricultural products only';
+      submitButton.textContent = 'Publish listing';
+      editingProductImageUrl = null;
+    }
+
+    document.getElementById('sellModal').classList.remove('hidden');
+    document.getElementById('sellFormView').classList.remove('hidden');
+    document.getElementById('sellSuccessView').classList.add('hidden');
+  }
 
   function handlePhoto(input) {
     const file = input.files[0];
@@ -1061,14 +1122,19 @@
   }
 
   function resetSellForm() {
+    editingProductId = null;
+    editingProductImageUrl = null;
     document.getElementById('sellForm').reset();
     document.getElementById('photoPlaceholder').classList.remove('hidden');
     const img = document.getElementById('photoPreview');
     img.src = ''; img.classList.add('hidden');
     document.getElementById('dropzone').classList.add('dropzone');
+    document.getElementById('sellModalTitle').textContent = 'List a product';
+    document.getElementById('sellModalDescription').textContent = 'Sell directly to buyers — agricultural products only';
+    document.getElementById('sellSubmitButton').textContent = 'Publish listing';
   }
 
-  function submitListing(evt) {
+  async function submitListing(evt) {
     evt.preventDefault();
     const title = document.getElementById('fieldTitle').value.trim();
     const category = document.getElementById('fieldCategory').value;
@@ -1085,19 +1151,66 @@
     };
 
     const fallbackImg = 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=600&q=80';
-
-    const newProduct = {
-      id: nextId++,
-      title, category, price, unit, qty, sold: 0, desc, location,
-      seller: 'You',
+    let imageUrl = (photoSrc && !photoSrc.startsWith('data:') && !photoSrc.endsWith('/')) ? photoSrc : null;
+    if (!imageUrl && editingProductId && editingProductImageUrl) {
+      imageUrl = editingProductImageUrl;
+    }
+    if (!imageUrl) {
+      imageUrl = fallbackImg;
+    }
+    const payload = {
+      title,
+      category,
       emoji: categoryEmoji[category] || '🌿',
-      img: (photoSrc && !photoSrc.endsWith('/')) ? photoSrc : fallbackImg,
-      date: 'Just now',
-      isNew: true
+      price,
+      unit,
+      quantity: qty,
+      sold: 0,
+      description: desc || null,
+      location,
+      image_url: imageUrl,
+      is_active: true,
     };
-    userProducts.unshift(newProduct);
 
-    document.getElementById('successCopy').textContent = `"${title}" is now live on the marketplace and visible to buyers nearby.`;
+    const method = editingProductId ? 'PATCH' : 'POST';
+    const url = editingProductId ? `/api/products/${editingProductId}` : '/api/products';
+    const response = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      showToast(error.detail || (editingProductId ? 'Failed to update listing' : 'Failed to publish listing'));
+      return false;
+    }
+
+    const created = await response.json();
+    const updatedProduct = {
+      id: created.id || (editingProductId ? editingProductId : nextId++),
+      title,
+      category,
+      price,
+      unit,
+      qty: created.quantity || qty,
+      sold: created.sold || 0,
+      desc: created.description || desc,
+      location: created.location || location,
+      seller: 'You',
+      emoji: created.emoji || payload.emoji,
+      img: created.image_url || payload.image_url,
+      date: 'Just now',
+      isNew: true,
+    };
+
+    if (editingProductId) {
+      userProducts = userProducts.map(p => p.id === editingProductId ? updatedProduct : p);
+      document.getElementById('successCopy').textContent = `"${title}" has been updated.`;
+    } else {
+      userProducts.unshift(updatedProduct);
+      document.getElementById('successCopy').textContent = `"${title}" is now live on the marketplace and visible to buyers nearby.`;
+    }
     document.getElementById('sellFormView').classList.add('hidden');
     document.getElementById('sellSuccessView').classList.remove('hidden');
 
@@ -1132,7 +1245,7 @@
 
   /* ── Seller dashboard: stats + inventory table ── */
   function renderShopTable() {
-    const mine = userProducts.length ? userProducts : seedProducts; // show seed data as "your" shop if nothing listed yet, for demo purposes
+    const mine = [...userProducts];
     const sort = document.getElementById('shopSortSelect') ? document.getElementById('shopSortSelect').value : 'newest';
     let list = mine.slice();
     if (sort === 'stock-asc') list.sort((a,b) => a.qty - b.qty);

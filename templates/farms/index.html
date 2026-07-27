@@ -194,11 +194,23 @@
           </span>
         </div>
         <div class="flex items-center gap-3">
+          {% if session_user %}
+          <span class="text-ink/80">Hi, {{ nav_first_name }}</span>
+          {% else %}
           <a href="#" class="hover:text-ink">Help</a>
+          {% endif %}
           <span class="text-ink/30">|</span>
-          <a href="#" class="hover:text-ink">Track order</a>
+          {% if session_user %}
+          <a href="{{ dashboard_url }}" class="hover:text-ink">Dashboard</a>
+          {% else %}
+          <a href="#" data-auth-open="signin" class="hover:text-ink">Dashboard</a>
+          {% endif %}
           <span class="text-ink/30">|</span>
+          {% if session_user %}
+          <a href="{{ request.url_for('logout') }}" class="hover:text-ink">Sign out</a>
+          {% else %}
           <a href="#" data-auth-open="signin" class="hover:text-ink">Sign in</a>
+          {% endif %}
         </div>
       </div>
     </div>
@@ -224,7 +236,7 @@
 
         <nav class="hidden flex-1 items-center justify-center gap-7 text-sm text-ink/80 md:flex">
           <a class="nav-link hover:text-ink transition" href="#home">Home</a>
-          <a class="nav-link hover:text-ink transition" href="{% url 'categories' %}">Categories</a>
+          <a class="nav-link hover:text-ink transition" href="{{ request.url_for('categories') }}">Categories</a>
           <a class="nav-link hover:text-ink transition" href="#products">Products</a>
           <a class="nav-link hover:text-ink transition" href="#about">About</a>
           <a class="nav-link hover:text-ink transition" href="#blog">Blog</a>
@@ -244,7 +256,10 @@
             />
           </div>
           <button
-            class="grid h-10 w-10 place-items-center rounded-full border border-ink/10 bg-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow active:translate-y-0"
+            id="cartButton"
+            class="relative grid h-10 w-10 place-items-center rounded-full border border-ink/10 bg-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow active:translate-y-0"
+            type="button"
+            aria-label="Open cart"
           >
             <svg viewBox="0 0 24 24" class="h-5 w-5 text-ink/70" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M6 6h15l-1.5 9H7.5L6 6Z" />
@@ -252,6 +267,10 @@
               <path d="M9 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" />
               <path d="M18 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" />
             </svg>
+            <span
+              id="cartCount"
+              class="absolute -right-1 -top-1 hidden min-w-5 rounded-full bg-peach-600 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white"
+            >0</span>
           </button>
           <button
             class="grid h-10 w-10 place-items-center rounded-full border border-ink/10 bg-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow active:translate-y-0 md:hidden"
@@ -535,13 +554,13 @@
       <section id="categories" class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-7 reveal" data-reveal="scale">
         <div class="text-center">
           <div class="text-xs font-semibold tracking-[0.25em] text-ink/55">FRESH PRODUCE</div>
-          <h2 class="mt-2 font-serif text-3xl font-semibold tracking-tight sm:text-4xl">Fruits &amp; Vegetables</h2>
+          <h2 class="mt-2 font-serif text-3xl font-semibold tracking-tight sm:text-4xl">Shop by category</h2>
           <p class="mx-auto mt-3 max-w-2xl text-sm text-ink/70 sm:text-base">
-            Explore popular picks with soft, airy tiles — inspired by your reference layout.
+            Browse every active Supabase product, grouped by the category chosen by the seller.
           </p>
         </div>
 
-        <div class="mt-6 flex flex-wrap items-center justify-center gap-2">
+        <div id="categoryFilters" class="mt-6 flex flex-wrap items-center justify-center gap-2">
           <button class="rounded-full bg-brand-600 px-4 py-2 text-xs font-semibold text-white shadow-sm">All</button>
           <button class="rounded-full border border-ink/10 bg-white px-4 py-2 text-xs font-semibold text-ink/80 hover:bg-brand-50">
             Fruits
@@ -559,7 +578,12 @@
       </section>
 
       <section id="products" class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-11">
-        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div id="productsRoot" class="space-y-9">
+          <div class="rounded-3xl bg-white p-6 text-center text-sm text-ink/60 shadow-sm ring-1 ring-ink/5">
+            Loading products from Supabase...
+          </div>
+        </div>
+        <div id="staticProductsGrid" class="hidden grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <!-- product tile component -->
           <article class="group rounded-3xl bg-brand-50 p-5 shadow-sm ring-1 ring-brand-100 transition duration-300 hover:-translate-y-1 hover:shadow-card reveal" data-reveal="left">
             <div class="flex items-center justify-between">
@@ -928,7 +952,13 @@
           <a href="#products" class="hidden text-sm font-semibold text-brand-700 hover:text-brand-800 sm:inline">View all →</a>
         </div>
 
-        <div class="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div id="featuredProducts" class="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div class="rounded-3xl bg-white p-5 text-center text-sm text-ink/60 shadow-sm ring-1 ring-ink/5 sm:col-span-2 lg:col-span-4">
+            Loading featured products...
+          </div>
+        </div>
+
+        <div id="staticFeaturedProducts" class="hidden mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div class="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-ink/5 transition duration-300 hover:-translate-y-1 hover:shadow-card reveal" data-reveal="left">
             <img
               class="h-40 w-full rounded-2xl object-cover transition duration-700 hover:scale-[1.03]"
@@ -1016,7 +1046,7 @@
           <div class="relative min-h-[280px]">
             <img
               class="absolute inset-0 h-full w-full object-cover"
-              src="https://images.unsplash.com/photo-1598515214215-016b07c01da6?auto=format&fit=crop&w=1600&q=80"
+              src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=1200&q=80"
               alt="Farmer holding vegetables"
               loading="lazy"
             />
@@ -1160,6 +1190,94 @@
       </section>
     </main>
 
+    <!-- Product details modal -->
+    <div
+      id="productModal"
+      class="fixed inset-0 z-50 hidden items-center justify-center bg-ink/35 p-4 backdrop-blur-sm"
+      aria-hidden="true"
+    >
+      <div class="relative max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-[28px] bg-white shadow-soft ring-1 ring-ink/10">
+        <button
+          id="productModalClose"
+          class="absolute right-3 top-3 z-10 grid h-10 w-10 place-items-center rounded-full border border-ink/10 bg-white text-ink/60 shadow-sm transition hover:text-ink"
+          aria-label="Close product details"
+          type="button"
+        >
+          <span class="text-lg">x</span>
+        </button>
+        <div class="grid gap-0 md:grid-cols-[0.95fr_1.05fr]">
+          <div class="bg-brand-50 p-4">
+            <img id="productModalImage" class="h-72 w-full rounded-3xl object-cover md:h-full" src="" alt="" />
+          </div>
+          <div class="p-6">
+            <div class="flex flex-wrap items-center gap-2">
+              <span id="productModalCategory" class="rounded-full bg-brand-50 px-3 py-1 text-[11px] font-semibold text-brand-800 ring-1 ring-brand-100"></span>
+              <span id="productModalVerified" class="hidden rounded-full bg-brand-600 px-3 py-1 text-[11px] font-semibold text-white"></span>
+            </div>
+            <h3 id="productModalTitle" class="mt-4 font-serif text-3xl font-semibold tracking-tight"></h3>
+            <p id="productModalSeller" class="mt-2 text-sm text-ink/65"></p>
+            <p id="productModalDescription" class="mt-4 text-sm leading-6 text-ink/75"></p>
+            <div class="mt-5 grid gap-3 rounded-3xl bg-paper p-4 text-sm text-ink/75 ring-1 ring-ink/5 sm:grid-cols-2">
+              <div>
+                <div class="text-xs font-semibold text-ink/45">Price</div>
+                <div id="productModalPrice" class="mt-1 font-semibold text-ink"></div>
+              </div>
+              <div>
+                <div class="text-xs font-semibold text-ink/45">Available</div>
+                <div id="productModalQty" class="mt-1 font-semibold text-ink"></div>
+              </div>
+              <div>
+                <div class="text-xs font-semibold text-ink/45">Location</div>
+                <div id="productModalLocation" class="mt-1 font-semibold text-ink"></div>
+              </div>
+              <div>
+                <div class="text-xs font-semibold text-ink/45">Sold</div>
+                <div id="productModalSold" class="mt-1 font-semibold text-ink"></div>
+              </div>
+            </div>
+            <div class="mt-6 flex flex-wrap gap-3">
+              <button id="productModalAdd" class="rounded-full bg-brand-600 px-5 py-3 text-sm font-semibold text-white shadow-soft transition duration-200 hover:-translate-y-0.5 hover:bg-brand-700 active:translate-y-0" type="button">
+                Add to cart
+              </button>
+              <button id="productModalBuy" class="rounded-full border border-ink/10 bg-white px-5 py-3 text-sm font-semibold text-ink shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow active:translate-y-0" type="button">
+                Buy now
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cart modal -->
+    <div
+      id="cartOverlay"
+      class="fixed inset-0 z-50 hidden items-center justify-center bg-ink/35 p-4 backdrop-blur-sm"
+      aria-hidden="true"
+    >
+      <div class="relative w-full max-w-lg rounded-[28px] bg-white p-6 shadow-soft ring-1 ring-ink/10">
+        <button
+          id="cartClose"
+          class="absolute right-3 top-3 grid h-10 w-10 place-items-center rounded-full border border-ink/10 bg-white text-ink/60 shadow-sm transition hover:text-ink"
+          aria-label="Close cart"
+          type="button"
+        >
+          <span class="text-lg">x</span>
+        </button>
+        <div class="pr-10">
+          <div class="text-xs font-semibold tracking-[0.25em] text-ink/45">YOUR CART</div>
+          <h3 class="mt-2 font-serif text-3xl font-semibold tracking-tight">Items added</h3>
+        </div>
+        <div id="cartItems" class="mt-5 max-h-[48vh] space-y-3 overflow-y-auto pr-1"></div>
+        <div class="mt-5 flex items-center justify-between rounded-3xl bg-paper px-4 py-3 text-sm ring-1 ring-ink/5">
+          <span class="font-semibold text-ink">Total</span>
+          <span id="cartTotal" class="font-semibold text-ink">$0.00</span>
+        </div>
+        <button class="mt-4 w-full rounded-full bg-brand-600 px-5 py-3 text-sm font-semibold text-white shadow-soft transition duration-200 hover:-translate-y-0.5 hover:bg-brand-700 active:translate-y-0" type="button">
+          Checkout
+        </button>
+      </div>
+    </div>
+
     <!-- Auth modal -->
     <div
       id="authOverlay"
@@ -1255,15 +1373,14 @@
               </label>
 
               <button
-               onclick="openTrackOrder()"
                 id="authPrimary"
                 class="mt-2 rounded-2xl bg-brand-600 px-4 py-3 text-sm font-semibold text-white shadow-soft transition duration-200 hover:-translate-y-0.5 hover:bg-brand-700 active:translate-y-0"
                 type="button"
               >
-                Sign in
+                Sign in with Google
               </button>
               <div class="pb-6 text-center text-xs text-ink/55">
-                Tip: to enable real Google auth, paste your Google Client ID in the script config at the bottom.
+                Use Google authentication to sign in or create an account.
               </div>
             </form>
           </div>
@@ -1351,10 +1468,387 @@
 
     <script>
       document.getElementById("year").textContent = new Date().getFullYear();
-      function openTrackOrder() {
-        // Redirect to dashboard
-        window.location.href = "{% url 'dashboard' %}";
+      function openDashboard() {
+        window.location.href = "{{ dashboard_url }}";
       }
+
+      // Supabase products, product details, and cart
+      (function () {
+        const categoryFilters = document.getElementById("categoryFilters");
+        const productsRoot = document.getElementById("productsRoot");
+        const featuredProducts = document.getElementById("featuredProducts");
+        const cartButton = document.getElementById("cartButton");
+        const cartCount = document.getElementById("cartCount");
+        const cartOverlay = document.getElementById("cartOverlay");
+        const cartClose = document.getElementById("cartClose");
+        const cartItems = document.getElementById("cartItems");
+        const cartTotal = document.getElementById("cartTotal");
+        const productModal = document.getElementById("productModal");
+        const productModalClose = document.getElementById("productModalClose");
+        const productModalImage = document.getElementById("productModalImage");
+        const productModalCategory = document.getElementById("productModalCategory");
+        const productModalVerified = document.getElementById("productModalVerified");
+        const productModalTitle = document.getElementById("productModalTitle");
+        const productModalSeller = document.getElementById("productModalSeller");
+        const productModalDescription = document.getElementById("productModalDescription");
+        const productModalPrice = document.getElementById("productModalPrice");
+        const productModalQty = document.getElementById("productModalQty");
+        const productModalLocation = document.getElementById("productModalLocation");
+        const productModalSold = document.getElementById("productModalSold");
+        const productModalAdd = document.getElementById("productModalAdd");
+        const productModalBuy = document.getElementById("productModalBuy");
+
+        if (!categoryFilters || !productsRoot || !featuredProducts || !cartButton || !cartCount) return;
+
+        const fallbackImages = [
+          "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=900&q=80",
+          "https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?auto=format&fit=crop&w=900&q=80",
+          "https://images.unsplash.com/photo-1506806732259-39c2d0268443?auto=format&fit=crop&w=900&q=80",
+          "https://images.unsplash.com/photo-1464965911861-746a04b4bca6?auto=format&fit=crop&w=900&q=80",
+        ];
+
+        let products = [];
+        let activeCategory = "All";
+        let selectedProduct = null;
+        let cart = loadCart();
+
+        function escapeHtml(value) {
+          return String(value ?? "")
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+        }
+
+        function normalizeProduct(product, index) {
+          const unit = product.unit || "item";
+          return {
+            id: String(product.id),
+            title: product.title || "Untitled product",
+            category: product.category || "Uncategorized",
+            emoji: product.emoji || "",
+            price: Number(product.price || 0),
+            unit,
+            qty: Number(product.qty ?? product.quantity ?? 0),
+            sold: Number(product.sold || 0),
+            location: product.location || "Not listed",
+            seller: product.seller || "Unknown seller",
+            sellerVerified: Boolean(product.seller_verified),
+            desc: product.desc || product.description || "No product description has been added yet.",
+            img: product.img || product.image_url || fallbackImages[index % fallbackImages.length],
+          };
+        }
+
+        function loadCart() {
+          try {
+            const saved = JSON.parse(localStorage.getItem("gopfarms_cart") || "[]");
+            return Array.isArray(saved) ? saved : [];
+          } catch {
+            return [];
+          }
+        }
+
+        function saveCart() {
+          localStorage.setItem("gopfarms_cart", JSON.stringify(cart));
+        }
+
+        function formatPrice(amount) {
+          return "$" + Number(amount || 0).toFixed(2);
+        }
+
+        function findProduct(productId) {
+          return products.find((product) => product.id === String(productId));
+        }
+
+        function groupedProducts() {
+          const visible = activeCategory === "All" ? products : products.filter((product) => product.category === activeCategory);
+          return visible.reduce((groups, product) => {
+            if (!groups[product.category]) groups[product.category] = [];
+            groups[product.category].push(product);
+            return groups;
+          }, {});
+        }
+
+        function renderFilters() {
+          const categories = ["All", ...Array.from(new Set(products.map((product) => product.category))).sort()];
+          categoryFilters.innerHTML = categories
+            .map((category) => {
+              const active = category === activeCategory;
+              const className = active
+                ? "rounded-full bg-brand-600 px-4 py-2 text-xs font-semibold text-white shadow-sm"
+                : "rounded-full border border-ink/10 bg-white px-4 py-2 text-xs font-semibold text-ink/80 transition hover:bg-brand-50";
+              return `<button class="${className}" type="button" data-category-filter="${escapeHtml(category)}">${escapeHtml(category)}</button>`;
+            })
+            .join("");
+        }
+
+        function productCard(product, index, compact) {
+          const tone = index % 2 === 0 ? "bg-brand-50 ring-brand-100" : "bg-peach-50 ring-peach-100";
+          const description = compact ? `${formatPrice(product.price)} / ${escapeHtml(product.unit)}` : escapeHtml(product.desc);
+          return `
+            <article class="group cursor-pointer rounded-3xl ${compact ? "bg-white ring-ink/5" : tone} p-5 shadow-sm ring-1 transition duration-300 hover:-translate-y-1 hover:shadow-card" data-product-card data-product-id="${escapeHtml(product.id)}">
+              <div class="flex items-center justify-between gap-2">
+                <span class="rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-ink/70 ring-1 ring-ink/10">${escapeHtml(product.category)}</span>
+                ${product.sellerVerified ? '<span class="rounded-full bg-brand-600 px-3 py-1 text-[11px] font-semibold text-white">Verified</span>' : '<span class="rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-ink/55 ring-1 ring-ink/10">Seller</span>'}
+              </div>
+              <div class="mt-4 overflow-hidden rounded-2xl bg-white/70 p-3">
+                <img class="${compact ? "h-40" : "h-36"} w-full rounded-xl object-cover transition duration-700 group-hover:scale-[1.05]" src="${escapeHtml(product.img)}" alt="${escapeHtml(product.title)}" loading="lazy" />
+              </div>
+              <h3 class="mt-4 text-sm font-semibold">${escapeHtml(product.emoji ? product.emoji + " " + product.title : product.title)}</h3>
+              <p class="mt-1 line-clamp-2 text-xs text-ink/60">${description}</p>
+              <div class="mt-3 flex items-center gap-1 text-xs text-ink/60">
+                <span>Seller: ${escapeHtml(product.seller)}</span>
+                ${product.sellerVerified ? '<span class="font-semibold text-brand-700">Verified</span>' : ""}
+              </div>
+              <div class="mt-4 flex items-center justify-between gap-3">
+                <div class="text-sm font-semibold">${formatPrice(product.price)} <span class="text-xs font-medium text-ink/50">/ ${escapeHtml(product.unit)}</span></div>
+                <button class="inline-flex items-center justify-center rounded-full bg-brand-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-brand-700 active:translate-y-0" type="button" data-add-cart="${escapeHtml(product.id)}">
+                  Add
+                </button>
+              </div>
+            </article>
+          `;
+        }
+
+        function renderProducts() {
+          if (!products.length) {
+            productsRoot.innerHTML = '<div class="rounded-3xl bg-white p-6 text-center text-sm text-ink/60 shadow-sm ring-1 ring-ink/5">No active products are available yet.</div>';
+            featuredProducts.innerHTML = '<div class="rounded-3xl bg-white p-5 text-center text-sm text-ink/60 shadow-sm ring-1 ring-ink/5 sm:col-span-2 lg:col-span-4">No featured products yet.</div>';
+            return;
+          }
+
+          const groups = groupedProducts();
+          productsRoot.innerHTML = Object.entries(groups)
+            .map(([category, items]) => `
+              <section class="scroll-mt-28" data-category-section="${escapeHtml(category)}">
+                <div class="mb-4 flex items-end justify-between gap-4">
+                  <div>
+                    <div class="text-xs font-semibold tracking-[0.25em] text-ink/45">${items.length} ITEM${items.length === 1 ? "" : "S"}</div>
+                    <h3 class="mt-1 font-serif text-2xl font-semibold tracking-tight">${escapeHtml(category)}</h3>
+                  </div>
+                </div>
+                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                  ${items.map((product, index) => productCard(product, index, false)).join("")}
+                </div>
+              </section>
+            `)
+            .join("");
+
+          featuredProducts.innerHTML = products.slice(0, 4).map((product, index) => productCard(product, index, true)).join("");
+        }
+
+        function updateCartCount() {
+          const count = cart.reduce((total, item) => total + item.quantity, 0);
+          cartCount.textContent = String(count);
+          cartCount.classList.toggle("hidden", count === 0);
+        }
+
+        function addToCart(productId, openCartAfterAdd) {
+          const product = findProduct(productId);
+          if (!product) return;
+          const existing = cart.find((item) => item.id === product.id);
+          if (existing) {
+            existing.quantity += 1;
+          } else {
+            cart.push({ id: product.id, quantity: 1 });
+          }
+          saveCart();
+          renderCart();
+          updateCartCount();
+          if (openCartAfterAdd) openCart();
+        }
+
+        function setCartQuantity(productId, quantity) {
+          if (quantity <= 0) {
+            cart = cart.filter((item) => item.id !== String(productId));
+          } else {
+            const item = cart.find((entry) => entry.id === String(productId));
+            if (item) item.quantity = quantity;
+          }
+          saveCart();
+          renderCart();
+          updateCartCount();
+        }
+
+        function renderCart() {
+          if (!cartItems || !cartTotal) return;
+          const rows = cart
+            .map((item) => ({ item, product: findProduct(item.id) }))
+            .filter((entry) => entry.product);
+
+          if (!rows.length) {
+            cartItems.innerHTML = '<div class="rounded-3xl bg-paper p-5 text-center text-sm text-ink/60 ring-1 ring-ink/5">Your cart is empty.</div>';
+            cartTotal.textContent = "$0.00";
+            return;
+          }
+
+          cartItems.innerHTML = rows
+            .map(({ item, product }) => `
+              <div class="flex gap-3 rounded-3xl bg-paper p-3 ring-1 ring-ink/5">
+                <img class="h-16 w-16 rounded-2xl object-cover" src="${escapeHtml(product.img)}" alt="${escapeHtml(product.title)}" />
+                <div class="min-w-0 flex-1">
+                  <div class="truncate text-sm font-semibold">${escapeHtml(product.title)}</div>
+                  <div class="text-xs text-ink/60">${formatPrice(product.price)} / ${escapeHtml(product.unit)}</div>
+                  <div class="mt-2 flex items-center gap-2">
+                    <button class="grid h-7 w-7 place-items-center rounded-full bg-white text-sm font-semibold ring-1 ring-ink/10" type="button" data-cart-decrease="${escapeHtml(product.id)}">-</button>
+                    <span class="min-w-6 text-center text-sm font-semibold">${item.quantity}</span>
+                    <button class="grid h-7 w-7 place-items-center rounded-full bg-white text-sm font-semibold ring-1 ring-ink/10" type="button" data-cart-increase="${escapeHtml(product.id)}">+</button>
+                    <button class="ml-auto text-xs font-semibold text-peach-700" type="button" data-cart-remove="${escapeHtml(product.id)}">Remove</button>
+                  </div>
+                </div>
+              </div>
+            `)
+            .join("");
+
+          const total = rows.reduce((sum, row) => sum + row.product.price * row.item.quantity, 0);
+          cartTotal.textContent = formatPrice(total);
+        }
+
+        function openCart() {
+          if (!cartOverlay) return;
+          renderCart();
+          cartOverlay.classList.remove("hidden");
+          cartOverlay.classList.add("flex");
+          cartOverlay.setAttribute("aria-hidden", "false");
+          document.documentElement.style.overflow = "hidden";
+        }
+
+        function closeCart() {
+          if (!cartOverlay) return;
+          cartOverlay.classList.add("hidden");
+          cartOverlay.classList.remove("flex");
+          cartOverlay.setAttribute("aria-hidden", "true");
+          document.documentElement.style.overflow = "";
+        }
+
+        function openProduct(productId) {
+          const product = findProduct(productId);
+          if (!product || !productModal) return;
+          selectedProduct = product;
+          productModalImage.src = product.img;
+          productModalImage.alt = product.title;
+          productModalCategory.textContent = product.category;
+          productModalVerified.textContent = product.sellerVerified ? "Verified seller" : "";
+          productModalVerified.classList.toggle("hidden", !product.sellerVerified);
+          productModalTitle.textContent = product.emoji ? product.emoji + " " + product.title : product.title;
+          productModalSeller.textContent = `Sold by ${product.seller}${product.sellerVerified ? " - verified seller" : ""}`;
+          productModalDescription.textContent = product.desc;
+          productModalPrice.textContent = `${formatPrice(product.price)} / ${product.unit}`;
+          productModalQty.textContent = product.qty > 0 ? `${product.qty} available` : "Availability not listed";
+          productModalLocation.textContent = product.location;
+          productModalSold.textContent = `${product.sold} sold`;
+          productModal.classList.remove("hidden");
+          productModal.classList.add("flex");
+          productModal.setAttribute("aria-hidden", "false");
+          document.documentElement.style.overflow = "hidden";
+        }
+
+        function closeProduct() {
+          if (!productModal) return;
+          productModal.classList.add("hidden");
+          productModal.classList.remove("flex");
+          productModal.setAttribute("aria-hidden", "true");
+          selectedProduct = null;
+          document.documentElement.style.overflow = "";
+        }
+
+        function handleProductClick(event) {
+          const target = event.target;
+          if (!(target instanceof Element)) return;
+          const addButton = target.closest("[data-add-cart]");
+          if (addButton) {
+            event.preventDefault();
+            event.stopPropagation();
+            addToCart(addButton.getAttribute("data-add-cart"), false);
+            return;
+          }
+          const card = target.closest("[data-product-card]");
+          if (card) {
+            openProduct(card.getAttribute("data-product-id"));
+          }
+        }
+
+        categoryFilters.addEventListener("click", (event) => {
+          const target = event.target;
+          if (!(target instanceof Element)) return;
+          const button = target.closest("[data-category-filter]");
+          if (!button) return;
+          activeCategory = button.getAttribute("data-category-filter") || "All";
+          renderFilters();
+          renderProducts();
+        });
+
+        productsRoot.addEventListener("click", handleProductClick);
+        featuredProducts.addEventListener("click", handleProductClick);
+        cartButton.addEventListener("click", openCart);
+        if (cartClose) cartClose.addEventListener("click", closeCart);
+        if (cartOverlay) {
+          cartOverlay.addEventListener("click", (event) => {
+            if (event.target === cartOverlay) closeCart();
+          });
+        }
+        if (cartItems) {
+          cartItems.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+            const increase = target.closest("[data-cart-increase]");
+            const decrease = target.closest("[data-cart-decrease]");
+            const remove = target.closest("[data-cart-remove]");
+            const id = increase?.getAttribute("data-cart-increase") || decrease?.getAttribute("data-cart-decrease") || remove?.getAttribute("data-cart-remove");
+            if (!id) return;
+            const item = cart.find((entry) => entry.id === id);
+            if (increase && item) setCartQuantity(id, item.quantity + 1);
+            if (decrease && item) setCartQuantity(id, item.quantity - 1);
+            if (remove) setCartQuantity(id, 0);
+          });
+        }
+        if (productModalClose) productModalClose.addEventListener("click", closeProduct);
+        if (productModal) {
+          productModal.addEventListener("click", (event) => {
+            if (event.target === productModal) closeProduct();
+          });
+        }
+        if (productModalAdd) {
+          productModalAdd.addEventListener("click", () => {
+            if (selectedProduct) addToCart(selectedProduct.id, false);
+          });
+        }
+        if (productModalBuy) {
+          productModalBuy.addEventListener("click", () => {
+            if (!selectedProduct) return;
+            const productId = selectedProduct.id;
+            closeProduct();
+            addToCart(productId, true);
+          });
+        }
+        document.addEventListener("keydown", (event) => {
+          if (event.key !== "Escape") return;
+          closeProduct();
+          closeCart();
+        });
+
+        updateCartCount();
+        renderCart();
+
+        fetch("/api/products")
+          .then((response) => {
+            if (!response.ok) throw new Error("Product request failed");
+            return response.json();
+          })
+          .then((data) => {
+            products = Array.isArray(data) ? data.map(normalizeProduct) : [];
+            renderFilters();
+            renderProducts();
+            renderCart();
+          })
+          .catch(() => {
+            categoryFilters.innerHTML = '<button class="rounded-full border border-ink/10 bg-white px-4 py-2 text-xs font-semibold text-ink/80" type="button">Products unavailable</button>';
+            productsRoot.innerHTML = '<div class="rounded-3xl bg-white p-6 text-center text-sm text-ink/60 shadow-sm ring-1 ring-ink/5">Products could not be loaded right now.</div>';
+            featuredProducts.innerHTML = '<div class="rounded-3xl bg-white p-5 text-center text-sm text-ink/60 shadow-sm ring-1 ring-ink/5 sm:col-span-2 lg:col-span-4">Featured products could not be loaded.</div>';
+          });
+      })();
+
       // Scroll reveal (IntersectionObserver)
       (function () {
         const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -1486,8 +1980,11 @@
         tabSignin.addEventListener("click", () => setMode("signin"));
         tabSignup.addEventListener("click", () => setMode("signup"));
 
-        const googleSigninUrl = "{% url 'social:begin' 'google-oauth2' %}";
+        const googleSigninUrl = "{{ google_signin_url }}";
         googleBtn.addEventListener("click", () => {
+          window.location.href = googleSigninUrl;
+        });
+        authPrimary.addEventListener("click", () => {
           window.location.href = googleSigninUrl;
         });
       })();

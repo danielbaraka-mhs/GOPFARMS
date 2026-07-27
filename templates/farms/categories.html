@@ -133,7 +133,7 @@
     <!-- Header -->
     <header class="sticky top-0 z-30 border-b border-ink/5 bg-paper/75 backdrop-blur">
       <div class="mx-auto flex max-w-6xl items-center gap-4 px-3 py-3.5">
-        <a href="{% url 'home' %}" class="flex items-center gap-2 transition duration-300 hover:-translate-y-0.5">
+        <a href="{{ request.url_for('home') }}" class="flex items-center gap-2 transition duration-300 hover:-translate-y-0.5">
           <span class="grid h-9 w-9 place-items-center rounded-xl bg-brand-600 text-white shadow-sm transition duration-300 hover:shadow-md">
             <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M21 3s-7.5.6-12.2 5.3C4.1 12.9 3 21 3 21s8.1-1.1 12.7-5.8C20.4 10.5 21 3 21 3Z" />
@@ -149,17 +149,17 @@
         </a>
 
         <nav class="hidden flex-1 items-center justify-center gap-7 text-sm text-ink/80 md:flex">
-          <a class="hover:text-ink transition" href="{% url 'home' %}">Home</a>
-          <a class="text-ink font-semibold" href="{% url 'categories' %}">Categories</a>
-          <a class="hover:text-ink transition" href="{% url 'home' %}#products">Products</a>
-          <a class="hover:text-ink transition" href="{% url 'home' %}#about">About</a>
-          <a class="hover:text-ink transition" href="{% url 'home' %}#blog">Blog</a>
-          <a class="hover:text-ink transition" href="{% url 'home' %}#contact">Contact</a>
+          <a class="hover:text-ink transition" href="{{ request.url_for('home') }}">Home</a>
+          <a class="text-ink font-semibold" href="{{ request.url_for('categories') }}">Categories</a>
+          <a class="hover:text-ink transition" href="{{ request.url_for('home') }}#products">Products</a>
+          <a class="hover:text-ink transition" href="{{ request.url_for('home') }}#about">About</a>
+          <a class="hover:text-ink transition" href="{{ request.url_for('home') }}#blog">Blog</a>
+          <a class="hover:text-ink transition" href="{{ request.url_for('home') }}#contact">Contact</a>
         </nav>
 
         <div class="ml-auto flex items-center gap-2">
           <a
-            href="{% url 'home' %}#products"
+            href="{{ request.url_for('home') }}#products"
             class="rounded-full bg-brand-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-brand-700 active:translate-y-0"
           >
             Shop
@@ -353,7 +353,7 @@
       <div class="mx-auto max-w-6xl px-3 py-8">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div class="text-sm text-white/75">© <span id="year"></span> GOP FARMS</div>
-          <a href="{% url 'home' %}" class="text-sm font-semibold hover:text-white">Back to home →</a>
+          <a href="{{ request.url_for('home') }}" class="text-sm font-semibold hover:text-white">Back to home →</a>
         </div>
       </div>
     </footer>
