@@ -22,6 +22,7 @@ if not SUPABASE_URL or not SUPABASE_KEY:
 
 supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
+
 # Storage bucket used for product photos. Create this bucket (public) in the
 # Supabase dashboard, or set SUPABASE_PRODUCT_IMAGES_BUCKET to an existing one.
 PRODUCT_IMAGES_BUCKET = os.getenv("SUPABASE_PRODUCT_IMAGES_BUCKET", "product-images")
