@@ -99,6 +99,11 @@ class OrderUpdate(BaseModel):
     status: Optional[str] = None
 
 
+class CheckoutRequest(BaseModel):
+    product_id: int
+    quantity: int = 1
+
+
 class OrderRead(OrderBase):
     id: int
     created_at: datetime

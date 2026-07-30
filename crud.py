@@ -1,8 +1,11 @@
-﻿from decimal import Decimal
+﻿import mimetypes
+import os
+import uuid
+from decimal import Decimal
 from typing import List, Optional
 
 import schemas
-from database import supabase_client
+from database import supabase_client, PRODUCT_IMAGES_BUCKET
 from passlib.context import CryptContext
 
 if not supabase_client:
@@ -197,6 +200,58 @@ def update_product(db, product_id: int, product_data: schemas.ProductUpdate) -> 
 def delete_product(db, product_id: int) -> None:
     supabase_client.table("products").delete().eq("id", product_id).execute()
 
+def upload_product_image(seller_id: int, filename: str, file_bytes: bytes, content_type: Optional[str] = None) -> str:
+    """Upload a product photo to the Supabase Storage bucket and return its public URL.
+
+    Files are stored under `<seller_id>/<uuid>.<ext>` so sellers can't collide
+    with or overwrite each other's uploads.
+    """
+    ext = os.path.splitext(filename or "")[1].lower() or ".jpg"
+    storage_path = f"{seller_id}/{uuid.uuid4().hex}{ext}"
+    resolved_content_type = content_type or mimetypes.guess_type(filename or "")[0] or "image/jpeg"
+
+    supabase_client.storage.from_(PRODUCT_IMAGES_BUCKET).upload(
+        storage_path,
+        file_bytes,
+        {"content-type": resolved_content_type, "upsert": "true"},
+    )
+    return supabase_client.storage.from_(PRODUCT_IMAGES_BUCKET).get_public_url(storage_path)
+
+
+def create_order(db, order_data: schemas.OrderCreate) -> schemas.OrderRead:
+    payload = order_data.model_dump()
+    payload["status"] = payload.get("status") or "Pending"
+    response = supabase_client.table("orders").insert(payload).select("*").execute()
+    order_row = response.data[0]
+    return _row_to_order(order_row)
+
+
+def record_purchase(db, user: schemas.UserRead, product_id: int, quantity: int) -> schemas.OrderRead:
+    """Create an order for a single product 'Buy now' action and bump its sold count."""
+    product = get_product_by_id(db, product_id)
+    if not product:
+        raise ValueError("Product not found")
+
+    quantity = max(1, quantity or 1)
+    amount = round(float(product.price) * quantity, 2)
+    order_number = f"ORD-{uuid.uuid4().hex[:8].upper()}"
+
+    order = create_order(
+        db,
+        schemas.OrderCreate(
+            order_number=order_number,
+            item_name=product.title,
+            customer_name=get_display_name(user),
+            amount=amount,
+            status="Pending",
+            product_id=product.id,
+        ),
+    )
+
+    supabase_client.table("products").update({"sold": (product.sold or 0) + quantity}).eq("id", product.id).execute()
+    return order
+
+
 def get_recent_orders(db, limit: int = 10) -> List[schemas.OrderRead]:
     response = supabase_client.table("orders").select("*").order("created_at", desc=True).limit(limit).execute()
     return [_row_to_order(row) for row in (response.data or [])]
@@ -275,3 +330,39 @@ def serialize_order(order: schemas.OrderRead) -> dict:
 
 def fetch_supabase_table(table_name: str):
     return supabase_client.table(table_name).select("*").execute()
+
+
+# ---------------------------------------------------------------------------
+# Payments (used by checkout.py)
+# ---------------------------------------------------------------------------
+
+def create_payment(db, payment_data: dict) -> dict:
+    response = supabase_client.table("payments").insert(payment_data).select("*").execute()
+    return response.data[0]
+
+
+def update_payment(db, payment_id: int, updates: dict) -> dict:
+    response = supabase_client.table("payments").update(updates).eq("id", payment_id).select("*").execute()
+    return response.data[0]
+
+
+def get_payment_by_checkout_reference(db, checkout_reference: str) -> Optional[dict]:
+    response = (
+        supabase_client.table("payments")
+        .select("*")
+        .eq("checkout_reference", checkout_reference)
+        .limit(1)
+        .execute()
+    )
+    records = response.data or []
+    return records[0] if records else None
+
+
+def get_orders_by_checkout_reference(db, checkout_reference: str) -> List[schemas.OrderRead]:
+    response = (
+        supabase_client.table("orders")
+        .select("*")
+        .eq("checkout_reference", checkout_reference)
+        .execute()
+    )
+    return [_row_to_order(row) for row in (response.data or [])]

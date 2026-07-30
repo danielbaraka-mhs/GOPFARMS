@@ -126,6 +126,31 @@
           animation: none !important;
         }
       }
+
+      /* Skeleton loading shimmer (used while product data is being fetched) */
+      .skeleton {
+        position: relative;
+        overflow: hidden;
+        background: #eef2f0;
+      }
+      .skeleton::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        transform: translateX(-100%);
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.65), transparent);
+        animation: skeleton-shimmer 1.4s ease-in-out infinite;
+      }
+      @keyframes skeleton-shimmer {
+        100% {
+          transform: translateX(100%);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .skeleton::after {
+          animation: none !important;
+        }
+      }
     </style>
   </head>
 
@@ -158,6 +183,23 @@
         </nav>
 
         <div class="ml-auto flex items-center gap-2">
+          <button
+            id="cartButton"
+            class="relative grid h-10 w-10 place-items-center rounded-full border border-ink/10 bg-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow active:translate-y-0"
+            type="button"
+            aria-label="Open cart"
+          >
+            <svg viewBox="0 0 24 24" class="h-5 w-5 text-ink/70" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 6h15l-1.5 9H7.5L6 6Z" />
+              <path d="M6 6 5 3H2" stroke-linecap="round" />
+              <path d="M9 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" />
+              <path d="M18 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" />
+            </svg>
+            <span
+              id="cartCount"
+              class="absolute -right-1 -top-1 hidden min-w-5 rounded-full bg-peach-600 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white"
+            >0</span>
+          </button>
           <a
             href="{{ request.url_for('home') }}#products"
             class="rounded-full bg-brand-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-brand-700 active:translate-y-0"
@@ -178,25 +220,34 @@
       <div class="mx-auto max-w-6xl px-3 py-10">
         <div class="reveal is-visible" data-reveal="scale">
           <div class="text-xs font-semibold tracking-[0.25em] text-ink/55">CATEGORIES</div>
-          <h1 class="mt-2 font-serif text-4xl font-semibold tracking-tight sm:text-5xl">Browse “cat items”</h1>
+          <h1 class="mt-2 font-serif text-4xl font-semibold tracking-tight sm:text-5xl">Browse by category</h1>
           <p class="mt-4 max-w-2xl text-sm text-ink/70 sm:text-base">
-            Pick a category to see curated items. This page is designed to match the look, colors, and rounded tiles from your main layout.
+            Pick a category to see what local sellers have listed, add it to your cart, or buy it right away.
           </p>
         </div>
 
         <div class="mt-7 flex flex-wrap items-center gap-2 reveal is-visible" data-reveal="scale">
           <button data-cat="all" class="cat-btn rounded-full bg-brand-600 px-4 py-2 text-xs font-semibold text-white shadow-sm">All</button>
-          <button data-cat="fruits" class="cat-btn rounded-full border border-ink/10 bg-white px-4 py-2 text-xs font-semibold text-ink/80 hover:bg-brand-50">
-            Fruits
-          </button>
-          <button data-cat="vegetables" class="cat-btn rounded-full border border-ink/10 bg-white px-4 py-2 text-xs font-semibold text-ink/80 hover:bg-brand-50">
+          <button data-cat="Vegetables" class="cat-btn rounded-full border border-ink/10 bg-white px-4 py-2 text-xs font-semibold text-ink/80 hover:bg-brand-50">
             Vegetables
           </button>
-          <button data-cat="organic" class="cat-btn rounded-full border border-ink/10 bg-white px-4 py-2 text-xs font-semibold text-ink/80 hover:bg-brand-50">
-            Organic
+          <button data-cat="Fruits" class="cat-btn rounded-full border border-ink/10 bg-white px-4 py-2 text-xs font-semibold text-ink/80 hover:bg-brand-50">
+            Fruits
           </button>
-          <button data-cat="seasonal" class="cat-btn rounded-full border border-ink/10 bg-white px-4 py-2 text-xs font-semibold text-ink/80 hover:bg-brand-50">
-            Seasonal
+          <button data-cat="Grains &amp; Cereals" class="cat-btn rounded-full border border-ink/10 bg-white px-4 py-2 text-xs font-semibold text-ink/80 hover:bg-brand-50">
+            Grains &amp; Cereals
+          </button>
+          <button data-cat="Seeds &amp; Seedlings" class="cat-btn rounded-full border border-ink/10 bg-white px-4 py-2 text-xs font-semibold text-ink/80 hover:bg-brand-50">
+            Seeds &amp; Seedlings
+          </button>
+          <button data-cat="Livestock &amp; Poultry" class="cat-btn rounded-full border border-ink/10 bg-white px-4 py-2 text-xs font-semibold text-ink/80 hover:bg-brand-50">
+            Livestock &amp; Poultry
+          </button>
+          <button data-cat="Fertilizer &amp; Soil" class="cat-btn rounded-full border border-ink/10 bg-white px-4 py-2 text-xs font-semibold text-ink/80 hover:bg-brand-50">
+            Fertilizer &amp; Soil
+          </button>
+          <button data-cat="Farm Equipment" class="cat-btn rounded-full border border-ink/10 bg-white px-4 py-2 text-xs font-semibold text-ink/80 hover:bg-brand-50">
+            Farm Equipment
           </button>
         </div>
       </div>
@@ -207,29 +258,12 @@
       <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <a
           href="#items"
-          data-cat-jump="fruits"
-          class="group rounded-3xl bg-peach-50 p-6 shadow-sm ring-1 ring-peach-100 transition duration-300 hover:-translate-y-1 hover:shadow-card reveal"
+          data-cat-jump="Vegetables"
+          class="group rounded-3xl bg-brand-50 p-6 shadow-sm ring-1 ring-brand-100 transition duration-300 hover:-translate-y-1 hover:shadow-card reveal"
           data-reveal="left"
         >
           <div class="text-xs font-semibold tracking-wide text-ink/70">CATEGORY</div>
-          <div class="mt-2 font-serif text-2xl font-semibold">Fruits</div>
-          <div class="mt-1 text-sm text-ink/70">Sweet &amp; seasonal picks</div>
-          <img
-            class="mt-5 h-36 w-full rounded-2xl object-cover transition duration-700 group-hover:scale-[1.03]"
-            src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=80"
-            alt="Fruits"
-            loading="lazy"
-          />
-        </a>
-
-        <a
-          href="#items"
-          data-cat-jump="vegetables"
-          class="group rounded-3xl bg-brand-50 p-6 shadow-sm ring-1 ring-brand-100 transition duration-300 hover:-translate-y-1 hover:shadow-card reveal"
-          data-reveal="scale"
-        >
-          <div class="text-xs font-semibold tracking-wide text-ink/70">CATEGORY</div>
-          <div class="mt-2 font-serif text-2xl font-semibold">Vegetables</div>
+          <div class="mt-2 font-serif text-2xl font-semibold">🥕 Vegetables</div>
           <div class="mt-1 text-sm text-ink/70">Crisp greens &amp; roots</div>
           <img
             class="mt-5 h-36 w-full rounded-2xl object-cover transition duration-700 group-hover:scale-[1.03]"
@@ -241,34 +275,51 @@
 
         <a
           href="#items"
-          data-cat-jump="organic"
-          class="group rounded-3xl bg-white p-6 shadow-sm ring-1 ring-ink/5 transition duration-300 hover:-translate-y-1 hover:shadow-card reveal"
+          data-cat-jump="Fruits"
+          class="group rounded-3xl bg-peach-50 p-6 shadow-sm ring-1 ring-peach-100 transition duration-300 hover:-translate-y-1 hover:shadow-card reveal"
           data-reveal="scale"
         >
           <div class="text-xs font-semibold tracking-wide text-ink/70">CATEGORY</div>
-          <div class="mt-2 font-serif text-2xl font-semibold">Organic</div>
-          <div class="mt-1 text-sm text-ink/70">No chemicals</div>
+          <div class="mt-2 font-serif text-2xl font-semibold">🍅 Fruits</div>
+          <div class="mt-1 text-sm text-ink/70">Sweet &amp; seasonal picks</div>
           <img
             class="mt-5 h-36 w-full rounded-2xl object-cover transition duration-700 group-hover:scale-[1.03]"
-            src="https://images.unsplash.com/photo-1543168256-418811576931?auto=format&fit=crop&w=1200&q=80"
-            alt="Organic basket"
+            src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=80"
+            alt="Fruits"
             loading="lazy"
           />
         </a>
 
         <a
           href="#items"
-          data-cat-jump="seasonal"
+          data-cat-jump="Grains &amp; Cereals"
+          class="group rounded-3xl bg-white p-6 shadow-sm ring-1 ring-ink/5 transition duration-300 hover:-translate-y-1 hover:shadow-card reveal"
+          data-reveal="scale"
+        >
+          <div class="text-xs font-semibold tracking-wide text-ink/70">CATEGORY</div>
+          <div class="mt-2 font-serif text-2xl font-semibold">🌾 Grains &amp; Cereals</div>
+          <div class="mt-1 text-sm text-ink/70">Staples &amp; harvest goods</div>
+          <img
+            class="mt-5 h-36 w-full rounded-2xl object-cover transition duration-700 group-hover:scale-[1.03]"
+            src="https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1200&q=80"
+            alt="Grains"
+            loading="lazy"
+          />
+        </a>
+
+        <a
+          href="#items"
+          data-cat-jump="Livestock &amp; Poultry"
           class="group rounded-3xl bg-peach-50 p-6 shadow-sm ring-1 ring-peach-100 transition duration-300 hover:-translate-y-1 hover:shadow-card reveal"
           data-reveal="right"
         >
           <div class="text-xs font-semibold tracking-wide text-ink/70">CATEGORY</div>
-          <div class="mt-2 font-serif text-2xl font-semibold">Seasonal</div>
-          <div class="mt-1 text-sm text-ink/70">Best flavor now</div>
+          <div class="mt-2 font-serif text-2xl font-semibold">🐓 Livestock &amp; Poultry</div>
+          <div class="mt-1 text-sm text-ink/70">Farm-raised &amp; fresh</div>
           <img
             class="mt-5 h-36 w-full rounded-2xl object-cover transition duration-700 group-hover:scale-[1.03]"
-            src="https://images.unsplash.com/photo-1464965911861-746a04b4bca6?auto=format&fit=crop&w=1200&q=80"
-            alt="Seasonal berries"
+            src="https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?auto=format&fit=crop&w=1200&q=80"
+            alt="Poultry"
             loading="lazy"
           />
         </a>
@@ -292,61 +343,99 @@
         </div>
       </div>
 
-      <div id="itemsGrid" class="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <!-- item card template: data-cat -->
-        <article data-cat="fruits organic" class="item group rounded-3xl bg-peach-50 p-5 shadow-sm ring-1 ring-peach-100 transition duration-300 hover:-translate-y-1 hover:shadow-card reveal" data-reveal="left">
-          <div class="flex items-center justify-between">
-            <span class="rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-ink/70 ring-1 ring-ink/10">Fruits</span>
-            <span class="text-xs font-semibold text-ink/55">$4.99</span>
-          </div>
-          <div class="mt-4 overflow-hidden rounded-2xl bg-white/60 p-3">
-            <img class="h-36 w-full rounded-xl object-cover transition duration-700 group-hover:scale-[1.05]" src="https://images.unsplash.com/photo-1576186726115-4d51596775c9?auto=format&fit=crop&w=900&q=80" alt="Strawberries" loading="lazy" />
-          </div>
-          <h3 class="mt-4 text-sm font-semibold">Strawberries</h3>
-          <p class="mt-1 text-xs text-ink/60">Sweet • Juicy</p>
-          <button class="mt-4 w-full rounded-full bg-brand-600 px-4 py-2 text-xs font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-brand-700 active:translate-y-0">Add</button>
-        </article>
-
-        <article data-cat="fruits seasonal" class="item group rounded-3xl bg-brand-50 p-5 shadow-sm ring-1 ring-brand-100 transition duration-300 hover:-translate-y-1 hover:shadow-card reveal" data-reveal="scale">
-          <div class="flex items-center justify-between">
-            <span class="rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-ink/70 ring-1 ring-ink/10">Fruits</span>
-            <span class="text-xs font-semibold text-ink/55">$2.49</span>
-          </div>
-          <div class="mt-4 overflow-hidden rounded-2xl bg-white/60 p-3">
-            <img class="h-36 w-full rounded-xl object-cover transition duration-700 group-hover:scale-[1.05]" src="https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?auto=format&fit=crop&w=900&q=80" alt="Apples" loading="lazy" />
-          </div>
-          <h3 class="mt-4 text-sm font-semibold">Fresh Apples</h3>
-          <p class="mt-1 text-xs text-ink/60">Crisp • Sweet</p>
-          <button class="mt-4 w-full rounded-full bg-brand-600 px-4 py-2 text-xs font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-brand-700 active:translate-y-0">Add</button>
-        </article>
-
-        <article data-cat="vegetables organic" class="item group rounded-3xl bg-brand-50 p-5 shadow-sm ring-1 ring-brand-100 transition duration-300 hover:-translate-y-1 hover:shadow-card reveal" data-reveal="scale">
-          <div class="flex items-center justify-between">
-            <span class="rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-ink/70 ring-1 ring-ink/10">Vegetables</span>
-            <span class="text-xs font-semibold text-ink/55">$1.49</span>
-          </div>
-          <div class="mt-4 overflow-hidden rounded-2xl bg-white/60 p-3">
-            <img class="h-36 w-full rounded-xl object-cover transition duration-700 group-hover:scale-[1.05]" src="https://images.unsplash.com/photo-1459411621453-7b03977f4bfc?auto=format&fit=crop&w=900&q=80" alt="Carrots" loading="lazy" />
-          </div>
-          <h3 class="mt-4 text-sm font-semibold">Carrots</h3>
-          <p class="mt-1 text-xs text-ink/60">Crunchy • Fresh</p>
-          <button class="mt-4 w-full rounded-full bg-brand-600 px-4 py-2 text-xs font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-brand-700 active:translate-y-0">Add</button>
-        </article>
-
-        <article data-cat="vegetables seasonal" class="item group rounded-3xl bg-peach-50 p-5 shadow-sm ring-1 ring-peach-100 transition duration-300 hover:-translate-y-1 hover:shadow-card reveal" data-reveal="right">
-          <div class="flex items-center justify-between">
-            <span class="rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-ink/70 ring-1 ring-ink/10">Vegetables</span>
-            <span class="text-xs font-semibold text-ink/55">$1.29</span>
-          </div>
-          <div class="mt-4 overflow-hidden rounded-2xl bg-white/60 p-3">
-            <img class="h-36 w-full rounded-xl object-cover transition duration-700 group-hover:scale-[1.05]" src="https://images.unsplash.com/photo-1514996937319-344454492b37?auto=format&fit=crop&w=900&q=80" alt="Cucumbers" loading="lazy" />
-          </div>
-          <h3 class="mt-4 text-sm font-semibold">Cucumbers</h3>
-          <p class="mt-1 text-xs text-ink/60">Crisp • Hydrating</p>
-          <button class="mt-4 w-full rounded-full bg-brand-600 px-4 py-2 text-xs font-semibold text-white transition duration-200 hover:-translate-y-0.5 hover:bg-brand-700 active:translate-y-0">Add</button>
-        </article>
-      </div>
+      <div id="itemsGrid" class="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"></div>
     </section>
+
+    <!-- Product details modal -->
+    <div
+      id="productModal"
+      class="fixed inset-0 z-50 hidden items-center justify-center bg-ink/35 p-4 backdrop-blur-sm"
+      aria-hidden="true"
+    >
+      <div class="relative max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-[28px] bg-white shadow-soft ring-1 ring-ink/10">
+        <button
+          id="productModalClose"
+          class="absolute right-3 top-3 z-10 grid h-10 w-10 place-items-center rounded-full border border-ink/10 bg-white text-ink/60 shadow-sm transition hover:text-ink"
+          aria-label="Close product details"
+          type="button"
+        >
+          <span class="text-lg">x</span>
+        </button>
+        <div class="grid gap-0 md:grid-cols-[0.95fr_1.05fr]">
+          <div class="bg-brand-50 p-4">
+            <img id="productModalImage" class="h-72 w-full rounded-3xl object-cover md:h-full" src="" alt="" />
+          </div>
+          <div class="p-6">
+            <div class="flex flex-wrap items-center gap-2">
+              <span id="productModalCategory" class="rounded-full bg-brand-50 px-3 py-1 text-[11px] font-semibold text-brand-800 ring-1 ring-brand-100"></span>
+              <span id="productModalVerified" class="hidden rounded-full bg-brand-600 px-3 py-1 text-[11px] font-semibold text-white"></span>
+            </div>
+            <h3 id="productModalTitle" class="mt-4 font-serif text-3xl font-semibold tracking-tight"></h3>
+            <p id="productModalSeller" class="mt-2 text-sm text-ink/65"></p>
+            <p id="productModalDescription" class="mt-4 text-sm leading-6 text-ink/75"></p>
+            <div class="mt-5 grid gap-3 rounded-3xl bg-paper p-4 text-sm text-ink/75 ring-1 ring-ink/5 sm:grid-cols-2">
+              <div>
+                <div class="text-xs font-semibold text-ink/45">Price</div>
+                <div id="productModalPrice" class="mt-1 font-semibold text-ink"></div>
+              </div>
+              <div>
+                <div class="text-xs font-semibold text-ink/45">Available</div>
+                <div id="productModalQty" class="mt-1 font-semibold text-ink"></div>
+              </div>
+              <div>
+                <div class="text-xs font-semibold text-ink/45">Location</div>
+                <div id="productModalLocation" class="mt-1 font-semibold text-ink"></div>
+              </div>
+              <div>
+                <div class="text-xs font-semibold text-ink/45">Sold</div>
+                <div id="productModalSold" class="mt-1 font-semibold text-ink"></div>
+              </div>
+            </div>
+            <div class="mt-6 flex flex-wrap gap-3">
+              <button id="productModalAdd" class="rounded-full bg-brand-600 px-5 py-3 text-sm font-semibold text-white shadow-soft transition duration-200 hover:-translate-y-0.5 hover:bg-brand-700 active:translate-y-0" type="button">
+                Add to cart
+              </button>
+              <button id="productModalBuy" class="rounded-full border border-ink/10 bg-white px-5 py-3 text-sm font-semibold text-ink shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow active:translate-y-0" type="button">
+                Buy now
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cart modal -->
+    <div
+      id="cartOverlay"
+      class="fixed inset-0 z-50 hidden items-center justify-center bg-ink/35 p-4 backdrop-blur-sm"
+      aria-hidden="true"
+    >
+      <div class="relative w-full max-w-lg rounded-[28px] bg-white p-6 shadow-soft ring-1 ring-ink/10">
+        <button
+          id="cartClose"
+          class="absolute right-3 top-3 grid h-10 w-10 place-items-center rounded-full border border-ink/10 bg-white text-ink/60 shadow-sm transition hover:text-ink"
+          aria-label="Close cart"
+          type="button"
+        >
+          <span class="text-lg">x</span>
+        </button>
+        <div class="pr-10">
+          <div class="text-xs font-semibold tracking-[0.25em] text-ink/45">YOUR CART</div>
+          <h3 class="mt-2 font-serif text-3xl font-semibold tracking-tight">Items added</h3>
+        </div>
+        <div id="cartItems" class="mt-5 max-h-[48vh] space-y-3 overflow-y-auto pr-1"></div>
+        <div class="mt-5 flex items-center justify-between rounded-3xl bg-paper px-4 py-3 text-sm ring-1 ring-ink/5">
+          <span class="font-semibold text-ink">Total</span>
+          <span id="cartTotal" class="font-semibold text-ink">$0.00</span>
+        </div>
+        <a
+          href="{{ request.url_for('home') }}#products"
+          class="mt-4 block w-full rounded-full bg-brand-600 px-5 py-3 text-center text-sm font-semibold text-white shadow-soft transition duration-200 hover:-translate-y-0.5 hover:bg-brand-700 active:translate-y-0"
+        >
+          Checkout
+        </a>
+      </div>
+    </div>
 
     <!-- Footer -->
     <footer class="bg-brand-700 text-white">
@@ -381,19 +470,100 @@
         for (const el of els) io.observe(el);
       })();
 
-      // filtering
+      // products, cart, and buy logic (shared design/behavior with the home page)
       (function () {
         const buttons = Array.from(document.querySelectorAll(".cat-btn"));
-        const items = Array.from(document.querySelectorAll(".item"));
+        const itemsGrid = document.getElementById("itemsGrid");
         const hint = document.getElementById("itemsHint");
         const search = document.getElementById("search");
         const jumps = Array.from(document.querySelectorAll("[data-cat-jump]"));
+        const cartButton = document.getElementById("cartButton");
+        const cartCount = document.getElementById("cartCount");
+        const cartOverlay = document.getElementById("cartOverlay");
+        const cartClose = document.getElementById("cartClose");
+        const cartItems = document.getElementById("cartItems");
+        const cartTotal = document.getElementById("cartTotal");
+        const productModal = document.getElementById("productModal");
+        const productModalClose = document.getElementById("productModalClose");
+        const productModalImage = document.getElementById("productModalImage");
+        const productModalCategory = document.getElementById("productModalCategory");
+        const productModalVerified = document.getElementById("productModalVerified");
+        const productModalTitle = document.getElementById("productModalTitle");
+        const productModalSeller = document.getElementById("productModalSeller");
+        const productModalDescription = document.getElementById("productModalDescription");
+        const productModalPrice = document.getElementById("productModalPrice");
+        const productModalQty = document.getElementById("productModalQty");
+        const productModalLocation = document.getElementById("productModalLocation");
+        const productModalSold = document.getElementById("productModalSold");
+        const productModalAdd = document.getElementById("productModalAdd");
+        const productModalBuy = document.getElementById("productModalBuy");
 
+        if (!itemsGrid) return;
+
+        const fallbackImages = [
+          "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=900&q=80",
+          "https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?auto=format&fit=crop&w=900&q=80",
+          "https://images.unsplash.com/photo-1506806732259-39c2d0268443?auto=format&fit=crop&w=900&q=80",
+          "https://images.unsplash.com/photo-1464965911861-746a04b4bca6?auto=format&fit=crop&w=900&q=80",
+        ];
+
+        let products = [];
         let activeCat = "all";
         let query = "";
+        let selectedProduct = null;
+        let cart = loadCart();
+
+        function escapeHtml(value) {
+          return String(value ?? "")
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+        }
 
         function normalize(s) {
           return (s || "").toLowerCase().trim();
+        }
+
+        function normalizeProduct(product, index) {
+          const unit = product.unit || "item";
+          return {
+            id: String(product.id),
+            title: product.title || "Untitled product",
+            category: product.category || "Uncategorized",
+            emoji: product.emoji || "",
+            price: Number(product.price || 0),
+            unit,
+            qty: Number(product.qty ?? product.quantity ?? 0),
+            sold: Number(product.sold || 0),
+            location: product.location || "Not listed",
+            seller: product.seller || "Unknown seller",
+            sellerVerified: Boolean(product.seller_verified),
+            desc: product.desc || product.description || "No product description has been added yet.",
+            img: product.img || product.image_url || fallbackImages[index % fallbackImages.length],
+          };
+        }
+
+        function loadCart() {
+          try {
+            const saved = JSON.parse(localStorage.getItem("gopfarms_cart") || "[]");
+            return Array.isArray(saved) ? saved : [];
+          } catch {
+            return [];
+          }
+        }
+
+        function saveCart() {
+          localStorage.setItem("gopfarms_cart", JSON.stringify(cart));
+        }
+
+        function formatPrice(amount) {
+          return "$" + Number(amount || 0).toFixed(2);
+        }
+
+        function findProduct(productId) {
+          return products.find((product) => product.id === String(productId));
         }
 
         function setActiveButton() {
@@ -407,17 +577,211 @@
           }
         }
 
-        function apply() {
-          const label = activeCat === "all" ? "All" : activeCat[0].toUpperCase() + activeCat.slice(1);
-          if (hint) hint.textContent = `Showing: ${label}`;
+        function visibleProducts() {
+          return products.filter((product) => {
+            const matchesCat = activeCat === "all" ? true : product.category === activeCat;
+            const haystack = normalize(`${product.title} ${product.desc} ${product.category}`);
+            const matchesQuery = !query ? true : haystack.includes(query);
+            return matchesCat && matchesQuery;
+          });
+        }
 
-          for (const el of items) {
-            const cats = normalize(el.getAttribute("data-cat"));
-            const title = normalize(el.querySelector("h3")?.textContent || "");
-            const sub = normalize(el.querySelector("p")?.textContent || "");
-            const matchesCat = activeCat === "all" ? true : cats.includes(activeCat);
-            const matchesQuery = !query ? true : `${title} ${sub}`.includes(query);
-            el.style.display = matchesCat && matchesQuery ? "" : "none";
+        function skeletonCard() {
+          return `
+            <article class="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-ink/5">
+              <div class="flex items-center justify-between gap-2">
+                <span class="skeleton h-5 w-20 rounded-full"></span>
+                <span class="skeleton h-5 w-14 rounded-full"></span>
+              </div>
+              <div class="mt-4 overflow-hidden rounded-2xl bg-white/60 p-3">
+                <div class="skeleton h-36 w-full rounded-xl"></div>
+              </div>
+              <div class="skeleton mt-4 h-4 w-3/4 rounded-full"></div>
+              <div class="skeleton mt-2 h-3 w-1/2 rounded-full"></div>
+              <div class="mt-4 flex items-center justify-between gap-3">
+                <div class="skeleton h-4 w-16 rounded-full"></div>
+                <div class="skeleton h-8 w-16 rounded-full"></div>
+              </div>
+            </article>
+          `;
+        }
+
+        function renderSkeletons() {
+          if (hint) hint.textContent = "Loading items…";
+          itemsGrid.innerHTML = Array.from({ length: 8 }).map(() => skeletonCard()).join("");
+        }
+
+        function productCard(product, index) {
+          const tone = index % 2 === 0 ? "bg-brand-50 ring-brand-100" : "bg-peach-50 ring-peach-100";
+          return `
+            <article class="item group cursor-pointer rounded-3xl ${tone} p-5 shadow-sm ring-1 transition duration-300 hover:-translate-y-1 hover:shadow-card reveal is-visible" data-product-card data-product-id="${escapeHtml(product.id)}">
+              <div class="flex items-center justify-between gap-2">
+                <span class="rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-ink/70 ring-1 ring-ink/10">${escapeHtml(product.category)}</span>
+                ${product.sellerVerified ? '<span class="rounded-full bg-brand-600 px-3 py-1 text-[11px] font-semibold text-white">Verified</span>' : '<span class="rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-ink/55 ring-1 ring-ink/10">Seller</span>'}
+              </div>
+              <div class="mt-4 overflow-hidden rounded-2xl bg-white/60 p-3">
+                <img class="h-36 w-full rounded-xl object-cover transition duration-700 group-hover:scale-[1.05]" src="${escapeHtml(product.img)}" alt="${escapeHtml(product.title)}" loading="lazy" />
+              </div>
+              <h3 class="mt-4 text-sm font-semibold">${escapeHtml(product.emoji ? product.emoji + " " + product.title : product.title)}</h3>
+              <p class="mt-1 line-clamp-2 text-xs text-ink/60">${escapeHtml(product.desc)}</p>
+              <div class="mt-3 flex items-center gap-1 text-xs text-ink/60">
+                <span>Seller: ${escapeHtml(product.seller)}</span>
+              </div>
+              <div class="mt-4 flex items-center justify-between gap-3">
+                <div class="text-sm font-semibold">${formatPrice(product.price)} <span class="text-xs font-medium text-ink/50">/ ${escapeHtml(product.unit)}</span></div>
+                <button class="inline-flex items-center justify-center rounded-full bg-brand-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-brand-700 active:translate-y-0" type="button" data-add-cart="${escapeHtml(product.id)}">
+                  Add
+                </button>
+              </div>
+            </article>
+          `;
+        }
+
+        function renderItems() {
+          const visible = visibleProducts();
+          const label = activeCat === "all" ? "All" : activeCat;
+          if (hint) hint.textContent = `Showing: ${label}${query ? ` — "${query}"` : ""}`;
+
+          if (!products.length) {
+            itemsGrid.innerHTML = '<div class="col-span-full rounded-3xl bg-white p-6 text-center text-sm text-ink/60 shadow-sm ring-1 ring-ink/5">No active products are available yet.</div>';
+            return;
+          }
+          if (!visible.length) {
+            itemsGrid.innerHTML = '<div class="col-span-full rounded-3xl bg-white p-6 text-center text-sm text-ink/60 shadow-sm ring-1 ring-ink/5">No items match this category or search.</div>';
+            return;
+          }
+          itemsGrid.innerHTML = visible.map((product, index) => productCard(product, index)).join("");
+        }
+
+        function updateCartCount() {
+          if (!cartCount) return;
+          const count = cart.reduce((total, item) => total + item.quantity, 0);
+          cartCount.textContent = String(count);
+          cartCount.classList.toggle("hidden", count === 0);
+        }
+
+        function addToCart(productId, openCartAfterAdd) {
+          const product = findProduct(productId);
+          if (!product) return;
+          const existing = cart.find((item) => item.id === product.id);
+          if (existing) {
+            existing.quantity += 1;
+          } else {
+            cart.push({ id: product.id, quantity: 1 });
+          }
+          saveCart();
+          renderCart();
+          updateCartCount();
+          if (openCartAfterAdd) openCart();
+        }
+
+        function setCartQuantity(productId, quantity) {
+          if (quantity <= 0) {
+            cart = cart.filter((item) => item.id !== String(productId));
+          } else {
+            const item = cart.find((entry) => entry.id === String(productId));
+            if (item) item.quantity = quantity;
+          }
+          saveCart();
+          renderCart();
+          updateCartCount();
+        }
+
+        function renderCart() {
+          if (!cartItems || !cartTotal) return;
+          const rows = cart
+            .map((item) => ({ item, product: findProduct(item.id) }))
+            .filter((entry) => entry.product);
+
+          if (!rows.length) {
+            cartItems.innerHTML = '<div class="rounded-3xl bg-paper p-5 text-center text-sm text-ink/60 ring-1 ring-ink/5">Your cart is empty.</div>';
+            cartTotal.textContent = "$0.00";
+            return;
+          }
+
+          cartItems.innerHTML = rows
+            .map(({ item, product }) => `
+              <div class="flex gap-3 rounded-3xl bg-paper p-3 ring-1 ring-ink/5">
+                <img class="h-16 w-16 rounded-2xl object-cover" src="${escapeHtml(product.img)}" alt="${escapeHtml(product.title)}" />
+                <div class="min-w-0 flex-1">
+                  <div class="truncate text-sm font-semibold">${escapeHtml(product.title)}</div>
+                  <div class="text-xs text-ink/60">${formatPrice(product.price)} / ${escapeHtml(product.unit)}</div>
+                  <div class="mt-2 flex items-center gap-2">
+                    <button class="grid h-7 w-7 place-items-center rounded-full bg-white text-sm font-semibold ring-1 ring-ink/10" type="button" data-cart-decrease="${escapeHtml(product.id)}">-</button>
+                    <span class="min-w-6 text-center text-sm font-semibold">${item.quantity}</span>
+                    <button class="grid h-7 w-7 place-items-center rounded-full bg-white text-sm font-semibold ring-1 ring-ink/10" type="button" data-cart-increase="${escapeHtml(product.id)}">+</button>
+                    <button class="ml-auto text-xs font-semibold text-peach-700" type="button" data-cart-remove="${escapeHtml(product.id)}">Remove</button>
+                  </div>
+                </div>
+              </div>
+            `)
+            .join("");
+
+          const total = rows.reduce((sum, row) => sum + row.product.price * row.item.quantity, 0);
+          cartTotal.textContent = formatPrice(total);
+        }
+
+        function openCart() {
+          if (!cartOverlay) return;
+          renderCart();
+          cartOverlay.classList.remove("hidden");
+          cartOverlay.classList.add("flex");
+          cartOverlay.setAttribute("aria-hidden", "false");
+          document.documentElement.style.overflow = "hidden";
+        }
+
+        function closeCart() {
+          if (!cartOverlay) return;
+          cartOverlay.classList.add("hidden");
+          cartOverlay.classList.remove("flex");
+          cartOverlay.setAttribute("aria-hidden", "true");
+          document.documentElement.style.overflow = "";
+        }
+
+        function openProduct(productId) {
+          const product = findProduct(productId);
+          if (!product || !productModal) return;
+          selectedProduct = product;
+          productModalImage.src = product.img;
+          productModalImage.alt = product.title;
+          productModalCategory.textContent = product.category;
+          productModalVerified.textContent = product.sellerVerified ? "Verified seller" : "";
+          productModalVerified.classList.toggle("hidden", !product.sellerVerified);
+          productModalTitle.textContent = product.emoji ? product.emoji + " " + product.title : product.title;
+          productModalSeller.textContent = `Sold by ${product.seller}${product.sellerVerified ? " - verified seller" : ""}`;
+          productModalDescription.textContent = product.desc;
+          productModalPrice.textContent = `${formatPrice(product.price)} / ${product.unit}`;
+          productModalQty.textContent = product.qty > 0 ? `${product.qty} available` : "Availability not listed";
+          productModalLocation.textContent = product.location;
+          productModalSold.textContent = `${product.sold} sold`;
+          productModal.classList.remove("hidden");
+          productModal.classList.add("flex");
+          productModal.setAttribute("aria-hidden", "false");
+          document.documentElement.style.overflow = "hidden";
+        }
+
+        function closeProduct() {
+          if (!productModal) return;
+          productModal.classList.add("hidden");
+          productModal.classList.remove("flex");
+          productModal.setAttribute("aria-hidden", "true");
+          selectedProduct = null;
+          document.documentElement.style.overflow = "";
+        }
+
+        function handleProductClick(event) {
+          const target = event.target;
+          if (!(target instanceof Element)) return;
+          const addButton = target.closest("[data-add-cart]");
+          if (addButton) {
+            event.preventDefault();
+            event.stopPropagation();
+            addToCart(addButton.getAttribute("data-add-cart"), false);
+            return;
+          }
+          const card = target.closest("[data-product-card]");
+          if (card) {
+            openProduct(card.getAttribute("data-product-id"));
           }
         }
 
@@ -425,30 +789,92 @@
           b.addEventListener("click", () => {
             activeCat = b.getAttribute("data-cat") || "all";
             setActiveButton();
-            apply();
+            renderItems();
           });
         }
 
         if (search) {
           search.addEventListener("input", () => {
             query = normalize(search.value);
-            apply();
+            renderItems();
           });
         }
 
         for (const j of jumps) {
           j.addEventListener("click", () => {
-            const cat = j.getAttribute("data-cat-jump") || "all";
-            activeCat = cat;
+            activeCat = j.getAttribute("data-cat-jump") || "all";
             setActiveButton();
-            apply();
+            renderItems();
           });
         }
 
+        itemsGrid.addEventListener("click", handleProductClick);
+        if (cartButton) cartButton.addEventListener("click", openCart);
+        if (cartClose) cartClose.addEventListener("click", closeCart);
+        if (cartOverlay) {
+          cartOverlay.addEventListener("click", (event) => {
+            if (event.target === cartOverlay) closeCart();
+          });
+        }
+        if (cartItems) {
+          cartItems.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+            const increase = target.closest("[data-cart-increase]");
+            const decrease = target.closest("[data-cart-decrease]");
+            const remove = target.closest("[data-cart-remove]");
+            const id = increase?.getAttribute("data-cart-increase") || decrease?.getAttribute("data-cart-decrease") || remove?.getAttribute("data-cart-remove");
+            if (!id) return;
+            const item = cart.find((entry) => entry.id === id);
+            if (increase && item) setCartQuantity(id, item.quantity + 1);
+            if (decrease && item) setCartQuantity(id, item.quantity - 1);
+            if (remove) setCartQuantity(id, 0);
+          });
+        }
+        if (productModalClose) productModalClose.addEventListener("click", closeProduct);
+        if (productModal) {
+          productModal.addEventListener("click", (event) => {
+            if (event.target === productModal) closeProduct();
+          });
+        }
+        if (productModalAdd) {
+          productModalAdd.addEventListener("click", () => {
+            if (selectedProduct) addToCart(selectedProduct.id, false);
+          });
+        }
+        if (productModalBuy) {
+          productModalBuy.addEventListener("click", () => {
+            if (!selectedProduct) return;
+            const productId = selectedProduct.id;
+            closeProduct();
+            addToCart(productId, true);
+          });
+        }
+        document.addEventListener("keydown", (event) => {
+          if (event.key !== "Escape") return;
+          closeProduct();
+          closeCart();
+        });
+
         setActiveButton();
-        apply();
+        updateCartCount();
+        renderCart();
+        renderSkeletons();
+
+        fetch("/api/products")
+          .then((response) => {
+            if (!response.ok) throw new Error("Product request failed");
+            return response.json();
+          })
+          .then((data) => {
+            products = Array.isArray(data) ? data.map(normalizeProduct) : [];
+            renderItems();
+            renderCart();
+          })
+          .catch(() => {
+            itemsGrid.innerHTML = '<div class="col-span-full rounded-3xl bg-white p-6 text-center text-sm text-ink/60 shadow-sm ring-1 ring-ink/5">Products could not be loaded right now.</div>';
+          });
       })();
     </script>
   </body>
 </html>
-

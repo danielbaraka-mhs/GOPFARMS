@@ -1,13 +1,14 @@
 import os
 from dotenv import load_dotenv
 from typing import List
-from fastapi import FastAPI, Form, Request, status
+from fastapi import FastAPI, File, Form, Request, UploadFile, status
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 from authlib.integrations.starlette_client import OAuth
-
+from checkout import router as checkout_router
+   
 import crud
 import schemas
 
@@ -25,6 +26,8 @@ if session_secret == "replace-with-secret":
     warnings.warn("SESSION_SECRET_KEY is using default value. Set it in .env for production.", RuntimeWarning)
 app.add_middleware(SessionMiddleware, secret_key=session_secret)
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+app.include_router(checkout_router)
 
 templates = Jinja2Templates(directory="templates")
 
@@ -154,7 +157,30 @@ def home(request: Request):
 
 @app.get("/categories/", response_class=HTMLResponse)
 def categories(request: Request):
-    return templates.TemplateResponse(request, "farms/categories.html")
+    session_user = request.session.get("user")
+    all_products = crud.get_all_products(None)
+    serialized = [crud.serialize_product(p) for p in all_products]
+    # Collect unique non-empty categories in the order they first appear
+    seen_cats: list[str] = []
+    category_previews: dict[str, str] = {}
+    for p in serialized:
+        cat = (p.get("category") or "").strip()
+        if cat and cat not in seen_cats:
+            seen_cats.append(cat)
+        if cat and cat not in category_previews and p.get("img"):
+            category_previews[cat] = p["img"]
+    return templates.TemplateResponse(
+        request,
+        "farms/categories.html",
+        {
+            "request": request,
+            "products": serialized,
+            "categories": seen_cats,
+            "category_previews": category_previews,
+            "session_user": session_user,
+            "google_signin_url": "/oauth/login/google",
+        },
+    )
 
 
 @app.get("/dashboard/", response_class=HTMLResponse)
@@ -325,6 +351,35 @@ def api_products():
     return [crud.serialize_product(product) for product in products]
 
 
+MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024  # 5 MB
+
+
+@app.post("/api/upload-image")
+async def api_upload_image(request: Request, file: UploadFile = File(...)):
+    user = get_current_user(request)
+    if not user or user.account_type != "seller":
+        return JSONResponse({"detail": "Unauthorized"}, status_code=status.HTTP_401_UNAUTHORIZED)
+
+    if not file.content_type or not file.content_type.startswith("image/"):
+        return JSONResponse({"detail": "Only image files are allowed."}, status_code=status.HTTP_400_BAD_REQUEST)
+
+    contents = await file.read()
+    if not contents:
+        return JSONResponse({"detail": "The uploaded file was empty."}, status_code=status.HTTP_400_BAD_REQUEST)
+    if len(contents) > MAX_IMAGE_SIZE_BYTES:
+        return JSONResponse({"detail": "Images must be smaller than 5MB."}, status_code=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        image_url = crud.upload_product_image(user.id, file.filename, contents, file.content_type)
+    except Exception as exc:
+        return JSONResponse(
+            {"detail": f"Failed to upload image: {exc}"},
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+    return {"url": image_url}
+
+
 @app.post("/api/products", response_model=schemas.ProductRead)
 async def api_create_product(request: Request, product: schemas.ProductCreate):
     user = get_current_user(request)
@@ -356,6 +411,21 @@ async def api_delete_product(request: Request, product_id: int):
         return JSONResponse({"detail": "Product not found or unauthorized"}, status_code=status.HTTP_404_NOT_FOUND)
     crud.delete_product(None, product_id)
     return JSONResponse({"detail": "Deleted"}, status_code=status.HTTP_200_OK)
+
+
+@app.post("/api/checkout")
+async def api_checkout(request: Request, checkout: schemas.CheckoutRequest):
+    user = get_current_user(request)
+    if not user:
+        return JSONResponse(
+            {"detail": "Please log in to complete your purchase."},
+            status_code=status.HTTP_401_UNAUTHORIZED,
+        )
+    try:
+        order = crud.record_purchase(None, user, checkout.product_id, checkout.quantity)
+    except ValueError as exc:
+        return JSONResponse({"detail": str(exc)}, status_code=status.HTTP_404_NOT_FOUND)
+    return crud.serialize_order(order)
 
 
 @app.get("/api/orders", response_model=List[schemas.OrderRead])

@@ -123,22 +123,6 @@
   .seller-row:hover { background-color: #F9FAFB; }
 
   .stock-bar-fill { transition: width 1s cubic-bezier(.22,1,.36,1); }
-
-  /* Skeleton loading shimmer (used while product data is loading) */
-  .skeleton {
-    position: relative;
-    overflow: hidden;
-    background: #eef0ec;
-  }
-  .skeleton::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    transform: translateX(-100%);
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,.7), transparent);
-    animation: skeleton-sweep 1.4s ease-in-out infinite;
-  }
-  @keyframes skeleton-sweep { 100% { transform: translateX(100%); } }
 </style>
 </head>
 <body class="bg-[#F2F4F1] text-gray-900 antialiased">
@@ -258,41 +242,7 @@
       </div>
 
       <!-- ===== Product grid ===== -->
-      <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-        <!-- Skeleton placeholders shown until renderProducts() fills this in -->
-        <article class="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-          <div class="skeleton h-36 w-full"></div>
-          <div class="p-4 space-y-2">
-            <div class="skeleton h-4 w-3/4 rounded-full"></div>
-            <div class="skeleton h-3 w-1/2 rounded-full"></div>
-            <div class="skeleton h-3 w-1/3 rounded-full"></div>
-          </div>
-        </article>
-        <article class="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-          <div class="skeleton h-36 w-full"></div>
-          <div class="p-4 space-y-2">
-            <div class="skeleton h-4 w-3/4 rounded-full"></div>
-            <div class="skeleton h-3 w-1/2 rounded-full"></div>
-            <div class="skeleton h-3 w-1/3 rounded-full"></div>
-          </div>
-        </article>
-        <article class="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-          <div class="skeleton h-36 w-full"></div>
-          <div class="p-4 space-y-2">
-            <div class="skeleton h-4 w-3/4 rounded-full"></div>
-            <div class="skeleton h-3 w-1/2 rounded-full"></div>
-            <div class="skeleton h-3 w-1/3 rounded-full"></div>
-          </div>
-        </article>
-        <article class="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-          <div class="skeleton h-36 w-full"></div>
-          <div class="p-4 space-y-2">
-            <div class="skeleton h-4 w-3/4 rounded-full"></div>
-            <div class="skeleton h-3 w-1/2 rounded-full"></div>
-            <div class="skeleton h-3 w-1/3 rounded-full"></div>
-          </div>
-        </article>
-      </div>
+      <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"></div>
 
       <!-- Empty state -->
       <div id="emptyState" class="hidden flex-col items-center justify-center py-20 text-center">

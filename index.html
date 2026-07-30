@@ -1268,11 +1268,7 @@
           <span class="font-semibold text-ink">Total</span>
           <span id="cartTotal" class="font-semibold text-ink">$0.00</span>
         </div>
-        <button
-          id="cartCheckoutButton"
-          class="mt-4 w-full rounded-full bg-brand-600 px-5 py-3 text-sm font-semibold text-white shadow-soft transition duration-200 hover:-translate-y-0.5 hover:bg-brand-700 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-50"
-          type="button"
-        >
+        <button class="mt-4 w-full rounded-full bg-brand-600 px-5 py-3 text-sm font-semibold text-white shadow-soft transition duration-200 hover:-translate-y-0.5 hover:bg-brand-700 active:translate-y-0" type="button">
           Checkout
         </button>
       </div>
@@ -1480,7 +1476,6 @@
         const cartButton = document.getElementById("cartButton");
         const cartCount = document.getElementById("cartCount");
         const cartOverlay = document.getElementById("cartOverlay");
-        const cartCheckoutButton = document.getElementById("cartCheckoutButton");
         const cartClose = document.getElementById("cartClose");
         const cartItems = document.getElementById("cartItems");
         const cartTotal = document.getElementById("cartTotal");
@@ -1678,8 +1673,6 @@
             .map((item) => ({ item, product: findProduct(item.id) }))
             .filter((entry) => entry.product);
 
-          if (cartCheckoutButton) cartCheckoutButton.disabled = !rows.length;
-
           if (!rows.length) {
             cartItems.innerHTML = '<div class="rounded-3xl bg-paper p-5 text-center text-sm text-ink/60 ring-1 ring-ink/5">Your cart is empty.</div>';
             cartTotal.textContent = "$0.00";
@@ -1786,12 +1779,6 @@
         featuredProducts.addEventListener("click", handleProductClick);
         cartButton.addEventListener("click", openCart);
         if (cartClose) cartClose.addEventListener("click", closeCart);
-        if (cartCheckoutButton) {
-          cartCheckoutButton.addEventListener("click", () => {
-            if (!cart.length) return;
-            window.location.href = "{{ request.url_for('checkout') }}";
-          });
-        }
         if (cartOverlay) {
           cartOverlay.addEventListener("click", (event) => {
             if (event.target === cartOverlay) closeCart();
