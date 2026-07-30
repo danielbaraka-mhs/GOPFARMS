@@ -30,7 +30,7 @@ import crud
 import schemas
 
 router = APIRouter()
-templates = Jinja2Templates(directory="templates/checkout.html")  # Adjust if your templates directory is named differently
+templates = Jinja2Templates(directory="templates")  # Adjust if your templates directory is named differently
 
 # ---------------------------------------------------------------------------
 # Payment gateway credentials
@@ -118,8 +118,8 @@ async def checkout_page(request: Request):
     session_user = get_session_user(request)
     
   
-    return templates.TemplateResponse(
-        "checkout.html",
+    return templates.TemplateResponse(request,
+        "farms/checkout.html",
         {
             "request": request,
             "session_user": session_user,
