@@ -25,7 +25,9 @@ def _row_to_user(row: dict) -> schemas.UserRead:
 
 
 def _row_to_product(row: dict) -> schemas.ProductRead:
-    return schemas.ProductRead.model_validate({**row, "date_added": row.get("created_at")})
+    return schemas.ProductRead.model_validate(
+        {**row, "date_added": row.get("created_at")}
+    )
 
 
 def _row_to_order(row: dict) -> schemas.OrderRead:
@@ -33,29 +35,47 @@ def _row_to_order(row: dict) -> schemas.OrderRead:
 
 
 def _fetch_profile_for_user(user_id: int) -> Optional[dict]:
-    response = supabase_client.table("user_profiles").select("*").eq("user_id", user_id).limit(1).execute()
+    response = (
+        supabase_client.table("user_profiles")
+        .select("*")
+        .eq("user_id", user_id)
+        .limit(1)
+        .execute()
+    )
     records = response.data or []
     return records[0] if records else None
 
 
 def get_display_name(user: schemas.UserRead) -> str:
-    return " ".join(filter(None, [user.first_name or "", user.last_name or ""])) or user.username
+    return (
+        " ".join(filter(None, [user.first_name or "", user.last_name or ""]))
+        or user.username
+    )
 
 
 def get_user_by_email(db, email: str) -> Optional[schemas.UserRead]:
-    response = supabase_client.table("users").select("*").eq("email", email).limit(1).execute()
+    response = (
+        supabase_client.table("users").select("*").eq("email", email).limit(1).execute()
+    )
     records = response.data or []
     return _row_to_user(records[0]) if records else None
 
 
 def get_user(db, user_id: int) -> Optional[schemas.UserRead]:
-    response = supabase_client.table("users").select("*").eq("id", user_id).limit(1).execute()
+    response = (
+        supabase_client.table("users").select("*").eq("id", user_id).limit(1).execute()
+    )
     records = response.data or []
     return _row_to_user(records[0]) if records else None
 
 
 def get_users(db) -> List[schemas.UserRead]:
-    response = supabase_client.table("users").select("*").order("created_at", desc=True).execute()
+    response = (
+        supabase_client.table("users")
+        .select("*")
+        .order("created_at", desc=True)
+        .execute()
+    )
     return [_row_to_user(row) for row in (response.data or [])]
 
 
@@ -65,7 +85,9 @@ def _ensure_profile(user_id: int) -> None:
     supabase_client.table("user_profiles").insert({"user_id": user_id}).execute()
 
 
-def create_user_if_missing(db, email: str, first_name: str, last_name: str) -> schemas.UserRead:
+def create_user_if_missing(
+    db, email: str, first_name: str, last_name: str
+) -> schemas.UserRead:
     existing = get_user_by_email(db, email)
     if existing:
         return existing
@@ -91,16 +113,21 @@ def create_demo_user(db) -> schemas.UserRead:
     if existing:
         return existing
 
-    response = supabase_client.table("users").insert(
-        {
-            "username": "demo_seller",
-            "email": demo_email,
-            "first_name": "Harper",
-            "last_name": "Kim",
-            "is_active": True,
-            "account_type": "seller",
-        }
-    ).select("*").execute()
+    response = (
+        supabase_client.table("users")
+        .insert(
+            {
+                "username": "demo_seller",
+                "email": demo_email,
+                "first_name": "Harper",
+                "last_name": "Kim",
+                "is_active": True,
+                "account_type": "seller",
+            }
+        )
+        .select("*")
+        .execute()
+    )
     user_row = response.data[0]
     _ensure_profile(user_row["id"])
     return _row_to_user(user_row)
@@ -112,15 +139,29 @@ def seed_demo_data(db) -> None:
     return
 
 
-def create_user_profile_if_missing(db, user: schemas.UserRead) -> schemas.UserProfileRead:
+def create_user_profile_if_missing(
+    db, user: schemas.UserRead
+) -> schemas.UserProfileRead:
     profile_row = _fetch_profile_for_user(user.id)
     if profile_row:
         return _row_to_profile(profile_row)
-    response = supabase_client.table("user_profiles").insert({"user_id": user.id}).select("*").execute()
+    response = (
+        supabase_client.table("user_profiles")
+        .insert({"user_id": user.id})
+        .select("*")
+        .execute()
+    )
     return _row_to_profile(response.data[0])
 
 
-def update_user(db, user: schemas.UserRead, email: Optional[str] = None, first_name: Optional[str] = None, last_name: Optional[str] = None, account_type: Optional[str] = None) -> schemas.UserRead:
+def update_user(
+    db,
+    user: schemas.UserRead,
+    email: Optional[str] = None,
+    first_name: Optional[str] = None,
+    last_name: Optional[str] = None,
+    account_type: Optional[str] = None,
+) -> schemas.UserRead:
     updates = {}
     if email is not None:
         updates["email"] = email
@@ -132,14 +173,28 @@ def update_user(db, user: schemas.UserRead, email: Optional[str] = None, first_n
         updates["account_type"] = account_type
     if not updates:
         return user
-    response = supabase_client.table("users").update(updates).eq("id", user.id).select("*").execute()
+    response = (
+        supabase_client.table("users")
+        .update(updates)
+        .eq("id", user.id)
+        .select("*")
+        .execute()
+    )
     return _row_to_user(response.data[0])
 
 
-def update_user_profile(db, user: schemas.UserRead, profile_data: schemas.UserProfileBase) -> schemas.UserProfileRead:
+def update_user_profile(
+    db, user: schemas.UserRead, profile_data: schemas.UserProfileBase
+) -> schemas.UserProfileRead:
     profile = create_user_profile_if_missing(db, user)
     updates = {k: v for k, v in profile_data.model_dump().items() if v is not None}
-    response = supabase_client.table("user_profiles").update(updates).eq("user_id", user.id).select("*").execute()
+    response = (
+        supabase_client.table("user_profiles")
+        .update(updates)
+        .eq("user_id", user.id)
+        .select("*")
+        .execute()
+    )
     return _row_to_profile(response.data[0])
 
 
@@ -155,12 +210,20 @@ def set_user_password(db, user: schemas.UserRead, password: str) -> schemas.User
     if not password:
         return user
     hashed = pwd_context.hash(password)
-    response = supabase_client.table("users").update({"password_hash": hashed}).eq("id", user.id).select("*").execute()
+    response = (
+        supabase_client.table("users")
+        .update({"password_hash": hashed})
+        .eq("id", user.id)
+        .select("*")
+        .execute()
+    )
     return _row_to_user(response.data[0])
 
 
 def get_all_products(db) -> List[schemas.ProductRead]:
-    response = supabase_client.table("products").select("*").eq("is_active", True).execute()
+    response = (
+        supabase_client.table("products").select("*").eq("is_active", True).execute()
+    )
     return [_row_to_product(row) for row in (response.data or [])]
 
 
@@ -169,19 +232,35 @@ def get_all_products_schema(db) -> List[schemas.ProductRead]:
 
 
 def get_user_products(db, user: schemas.UserRead) -> List[schemas.ProductRead]:
-    response = supabase_client.table("products").select("*").eq("seller_id", user.id).eq("is_active", True).execute()
+    response = (
+        supabase_client.table("products")
+        .select("*")
+        .eq("seller_id", user.id)
+        .eq("is_active", True)
+        .execute()
+    )
     return [_row_to_product(row) for row in (response.data or [])]
 
 
 def get_user_products_schema(db, user: schemas.UserRead) -> List[schemas.ProductRead]:
     return get_user_products(db, user)
 
+
 def get_product_by_id(db, product_id: int) -> Optional[schemas.ProductRead]:
-    response = supabase_client.table("products").select("*").eq("id", product_id).limit(1).execute()
+    response = (
+        supabase_client.table("products")
+        .select("*")
+        .eq("id", product_id)
+        .limit(1)
+        .execute()
+    )
     records = response.data or []
     return _row_to_product(records[0]) if records else None
 
-def create_product(db, user: schemas.UserRead, product_data: schemas.ProductCreate) -> schemas.ProductRead:
+
+def create_product(
+    db, user: schemas.UserRead, product_data: schemas.ProductCreate
+) -> schemas.ProductRead:
     payload = product_data.model_dump()
     payload["seller_id"] = user.id
     payload["sold"] = payload.get("sold") or 0
@@ -191,16 +270,29 @@ def create_product(db, user: schemas.UserRead, product_data: schemas.ProductCrea
     product_row = response.data[0]
     return _row_to_product(product_row)
 
-def update_product(db, product_id: int, product_data: schemas.ProductUpdate) -> schemas.ProductRead:
+
+def update_product(
+    db, product_id: int, product_data: schemas.ProductUpdate
+) -> schemas.ProductRead:
     updates = {k: v for k, v in product_data.model_dump().items() if v is not None}
-    response = supabase_client.table("products").update(updates).eq("id", product_id).select("*").execute()
+    response = (
+        supabase_client.table("products")
+        .update(updates)
+        .eq("id", product_id)
+        .select("*")
+        .execute()
+    )
     product_row = response.data[0]
     return _row_to_product(product_row)
+
 
 def delete_product(db, product_id: int) -> None:
     supabase_client.table("products").delete().eq("id", product_id).execute()
 
-def upload_product_image(seller_id: int, filename: str, file_bytes: bytes, content_type: Optional[str] = None) -> str:
+
+def upload_product_image(
+    seller_id: int, filename: str, file_bytes: bytes, content_type: Optional[str] = None
+) -> str:
     """Upload a product photo to the Supabase Storage bucket and return its public URL.
 
     Files are stored under `<seller_id>/<uuid>.<ext>` so sellers can't collide
@@ -208,14 +300,18 @@ def upload_product_image(seller_id: int, filename: str, file_bytes: bytes, conte
     """
     ext = os.path.splitext(filename or "")[1].lower() or ".jpg"
     storage_path = f"{seller_id}/{uuid.uuid4().hex}{ext}"
-    resolved_content_type = content_type or mimetypes.guess_type(filename or "")[0] or "image/jpeg"
+    resolved_content_type = (
+        content_type or mimetypes.guess_type(filename or "")[0] or "image/jpeg"
+    )
 
     supabase_client.storage.from_(PRODUCT_IMAGES_BUCKET).upload(
         storage_path,
         file_bytes,
         {"content-type": resolved_content_type, "upsert": "true"},
     )
-    return supabase_client.storage.from_(PRODUCT_IMAGES_BUCKET).get_public_url(storage_path)
+    return supabase_client.storage.from_(PRODUCT_IMAGES_BUCKET).get_public_url(
+        storage_path
+    )
 
 
 def create_order(db, order_data: schemas.OrderCreate) -> schemas.OrderRead:
@@ -226,7 +322,9 @@ def create_order(db, order_data: schemas.OrderCreate) -> schemas.OrderRead:
     return _row_to_order(order_row)
 
 
-def record_purchase(db, user: schemas.UserRead, product_id: int, quantity: int) -> schemas.OrderRead:
+def record_purchase(
+    db, user: schemas.UserRead, product_id: int, quantity: int
+) -> schemas.OrderRead:
     """Create an order for a single product 'Buy now' action and bump its sold count."""
     product = get_product_by_id(db, product_id)
     if not product:
@@ -248,12 +346,20 @@ def record_purchase(db, user: schemas.UserRead, product_id: int, quantity: int) 
         ),
     )
 
-    supabase_client.table("products").update({"sold": (product.sold or 0) + quantity}).eq("id", product.id).execute()
+    supabase_client.table("products").update(
+        {"sold": (product.sold or 0) + quantity}
+    ).eq("id", product.id).execute()
     return order
 
 
 def get_recent_orders(db, limit: int = 10) -> List[schemas.OrderRead]:
-    response = supabase_client.table("orders").select("*").order("created_at", desc=True).limit(limit).execute()
+    response = (
+        supabase_client.table("orders")
+        .select("*")
+        .order("created_at", desc=True)
+        .limit(limit)
+        .execute()
+    )
     return [_row_to_order(row) for row in (response.data or [])]
 
 
@@ -263,11 +369,16 @@ def get_recent_orders_schema(db, limit: int = 10) -> List[schemas.OrderRead]:
 
 def get_dashboard_stats(db) -> schemas.DashboardStats:
     orders = supabase_client.table("orders").select("id", count="exact").execute().count
-    products = supabase_client.table("products").select("id", count="exact").execute().count
-    products_data = supabase_client.table("products").select("price", "sold").execute().data or []
+    products = (
+        supabase_client.table("products").select("id", count="exact").execute().count
+    )
+    products_data = (
+        supabase_client.table("products").select("price", "sold").execute().data or []
+    )
     revenue = sum(float(item["price"]) * item["sold"] for item in products_data)
-    return schemas.DashboardStats(orders=orders, products=products or 0, revenue=float(revenue))
-
+    return schemas.DashboardStats(
+        orders=orders, products=products or 0, revenue=float(revenue)
+    )
 
 
 def _get_seller_display_name(seller_id: int) -> str:
@@ -278,7 +389,13 @@ def _get_seller_display_name(seller_id: int) -> str:
 
 
 def _get_seller_summary(seller_id: int) -> dict:
-    response = supabase_client.table("users").select("*").eq("id", seller_id).limit(1).execute()
+    response = (
+        supabase_client.table("users")
+        .select("*")
+        .eq("id", seller_id)
+        .limit(1)
+        .execute()
+    )
     records = response.data or []
     if not records:
         return {"name": str(seller_id), "verified": False}
@@ -293,13 +410,21 @@ def _get_seller_summary(seller_id: int) -> dict:
 
     return {
         "name": get_display_name(user) or user.username or f"Seller {seller_id}",
-        "verified": bool(explicit_verified) if explicit_verified is not None else bool(user.is_active and user.account_type == "seller"),
+        "verified": (
+            bool(explicit_verified)
+            if explicit_verified is not None
+            else bool(user.is_active and user.account_type == "seller")
+        ),
     }
 
 
 def serialize_product(product: schemas.ProductRead) -> dict:
     data = product.model_dump()
-    seller = _get_seller_summary(data.get("seller_id")) if data.get("seller_id") is not None else None
+    seller = (
+        _get_seller_summary(data.get("seller_id"))
+        if data.get("seller_id") is not None
+        else None
+    )
     return {
         "id": data["id"],
         "title": data["title"],
@@ -336,13 +461,22 @@ def fetch_supabase_table(table_name: str):
 # Payments (used by checkout.py)
 # ---------------------------------------------------------------------------
 
+
 def create_payment(db, payment_data: dict) -> dict:
-    response = supabase_client.table("payments").insert(payment_data).select("*").execute()
+    response = (
+        supabase_client.table("payments").insert(payment_data).select("*").execute()
+    )
     return response.data[0]
 
 
 def update_payment(db, payment_id: int, updates: dict) -> dict:
-    response = supabase_client.table("payments").update(updates).eq("id", payment_id).select("*").execute()
+    response = (
+        supabase_client.table("payments")
+        .update(updates)
+        .eq("id", payment_id)
+        .select("*")
+        .execute()
+    )
     return response.data[0]
 
 
@@ -358,7 +492,9 @@ def get_payment_by_checkout_reference(db, checkout_reference: str) -> Optional[d
     return records[0] if records else None
 
 
-def get_orders_by_checkout_reference(db, checkout_reference: str) -> List[schemas.OrderRead]:
+def get_orders_by_checkout_reference(
+    db, checkout_reference: str
+) -> List[schemas.OrderRead]:
     response = (
         supabase_client.table("orders")
         .select("*")

@@ -8,7 +8,7 @@ from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 from authlib.integrations.starlette_client import OAuth
 from checkout import router as checkout_router
-   
+
 import crud
 import schemas
 
@@ -16,14 +16,20 @@ load_dotenv()
 
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
-GOOGLE_OAUTH_REDIRECT_URI = os.getenv("GOOGLE_OAUTH_REDIRECT_URI", "http://127.0.0.1:8000/oauth/callback/google")
+GOOGLE_OAUTH_REDIRECT_URI = os.getenv(
+    "GOOGLE_OAUTH_REDIRECT_URI", "http://127.0.0.1:8000/oauth/callback/google"
+)
 
 app = FastAPI(title="GOP FARMS")
 # Session middleware MUST be added first for Authlib state handling
 session_secret = os.environ.get("SESSION_SECRET_KEY", "replace-with-secret")
 if session_secret == "replace-with-secret":
     import warnings
-    warnings.warn("SESSION_SECRET_KEY is using default value. Set it in .env for production.", RuntimeWarning)
+
+    warnings.warn(
+        "SESSION_SECRET_KEY is using default value. Set it in .env for production.",
+        RuntimeWarning,
+    )
 app.add_middleware(SessionMiddleware, secret_key=session_secret)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -106,7 +112,9 @@ def get_home_context(request: Request) -> dict:
 @app.get("/oauth/login/google")
 async def oauth_login_google(request: Request):
     if not GOOGLE_CLIENT_ID or not GOOGLE_CLIENT_SECRET:
-        return JSONResponse({"detail": "Google OAuth is not configured."}, status_code=500)
+        return JSONResponse(
+            {"detail": "Google OAuth is not configured."}, status_code=500
+        )
     # Use exact redirect URI from .env that matches Google Cloud Console
     return await oauth.google.authorize_redirect(request, GOOGLE_OAUTH_REDIRECT_URI)
 
@@ -117,10 +125,13 @@ async def oauth_callback_google(request: Request):
         token = await oauth.google.authorize_access_token(request, leeway=300)
     except Exception as e:
         import traceback
+
         error_detail = str(e)
         traceback.print_exc()
         print(f"Token exchange error: {error_detail}")
-        return JSONResponse({"detail": f"Token exchange failed: {error_detail}"}, status_code=400)
+        return JSONResponse(
+            {"detail": f"Token exchange failed: {error_detail}"}, status_code=400
+        )
 
     try:
         user_info = token.get("userinfo")
@@ -128,16 +139,26 @@ async def oauth_callback_google(request: Request):
             user_info = await oauth.google.parse_id_token(request, token, leeway=300)
     except Exception as e:
         import traceback
+
         traceback.print_exc()
-        return JSONResponse({"detail": f"Failed to parse user info: {str(e)}"}, status_code=400)
+        return JSONResponse(
+            {"detail": f"Failed to parse user info: {str(e)}"}, status_code=400
+        )
 
     if not user_info:
-        return JSONResponse({"detail": "Failed to retrieve user info from Google."}, status_code=400)
+        return JSONResponse(
+            {"detail": "Failed to retrieve user info from Google."}, status_code=400
+        )
 
     # Create the user record in Supabase if missing.
     user = None
     if user_info.get("email"):
-        user = crud.create_user_if_missing(None, user_info["email"], user_info.get("given_name", ""), user_info.get("family_name", ""))
+        user = crud.create_user_if_missing(
+            None,
+            user_info["email"],
+            user_info.get("given_name", ""),
+            user_info.get("family_name", ""),
+        )
 
     request.session["user"] = {
         "email": user_info.get("email"),
@@ -152,7 +173,9 @@ async def oauth_callback_google(request: Request):
 
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request):
-    return templates.TemplateResponse(request, "farms/index.html", get_home_context(request))
+    return templates.TemplateResponse(
+        request, "farms/index.html", get_home_context(request)
+    )
 
 
 @app.get("/categories/", response_class=HTMLResponse)
@@ -190,7 +213,9 @@ def dashboard(request: Request):
         user = crud.create_demo_user(None)
     profile = user.profile or crud.create_user_profile_if_missing(None, user)
     if user.account_type == "seller":
-        return RedirectResponse(url="/dashboard/seller/", status_code=status.HTTP_303_SEE_OTHER)
+        return RedirectResponse(
+            url="/dashboard/seller/", status_code=status.HTTP_303_SEE_OTHER
+        )
 
     accept_lang = request.headers.get("accept-language", "")
     detected_country = ""
@@ -231,7 +256,9 @@ def update_dashboard_profile(
         first_name = user.first_name
         last_name = user.last_name
 
-    user = crud.update_user(None, user, email=user.email, first_name=first_name, last_name=last_name)
+    user = crud.update_user(
+        None, user, email=user.email, first_name=first_name, last_name=last_name
+    )
     sync_session_user(request, user)
     profile_data = schemas.UserProfileBase(
         phone=phone or None,
@@ -255,7 +282,9 @@ def update_account_role(request: Request, target_type: str = Form(...)):
     user = crud.update_user(None, user, account_type=target_type)
     sync_session_user(request, user)
     if target_type == "seller":
-        return RedirectResponse(url="/dashboard/seller/", status_code=status.HTTP_303_SEE_OTHER)
+        return RedirectResponse(
+            url="/dashboard/seller/", status_code=status.HTTP_303_SEE_OTHER
+        )
     return RedirectResponse(url="/dashboard/", status_code=status.HTTP_303_SEE_OTHER)
 
 
@@ -265,7 +294,9 @@ def dashboard_seller(request: Request):
     user = get_current_user(request) or crud.create_demo_user(None)
     profile = user.profile or crud.create_user_profile_if_missing(None, user)
     if user.account_type != "seller":
-        return RedirectResponse(url="/dashboard/", status_code=status.HTTP_303_SEE_OTHER)
+        return RedirectResponse(
+            url="/dashboard/", status_code=status.HTTP_303_SEE_OTHER
+        )
     # detect country from Accept-Language header if profile has no country
     accept_lang = request.headers.get("accept-language", "")
     detected_country = ""
@@ -288,7 +319,9 @@ def dashboard_seller(request: Request):
         "seller_name": seller_name,
         "seller_initials": initials,
         "seller_location": profile.location or "Lilongwe, Central Region",
-        "member_since": user.created_at.strftime("%b %Y") if user.created_at else "Jan 2024",
+        "member_since": (
+            user.created_at.strftime("%b %Y") if user.created_at else "Jan 2024"
+        ),
         "user": user,
         "profile": profile,
         "detected_country": detected_country,
@@ -319,7 +352,9 @@ def update_dashboard_seller(
         last_name = user.last_name
 
     # Email is immutable via the profile form — always keep the current email
-    user = crud.update_user(None, user, email=user.email, first_name=first_name, last_name=last_name)
+    user = crud.update_user(
+        None, user, email=user.email, first_name=first_name, last_name=last_name
+    )
     sync_session_user(request, user)
 
     profile_data = schemas.UserProfileBase(
@@ -336,7 +371,9 @@ def update_dashboard_seller(
     if password:
         crud.set_user_password(None, user, password)
 
-    return RedirectResponse(url="/dashboard/seller/", status_code=status.HTTP_303_SEE_OTHER)
+    return RedirectResponse(
+        url="/dashboard/seller/", status_code=status.HTTP_303_SEE_OTHER
+    )
 
 
 @app.get("/logout")
@@ -358,19 +395,32 @@ MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024  # 5 MB
 async def api_upload_image(request: Request, file: UploadFile = File(...)):
     user = get_current_user(request)
     if not user or user.account_type != "seller":
-        return JSONResponse({"detail": "Unauthorized"}, status_code=status.HTTP_401_UNAUTHORIZED)
+        return JSONResponse(
+            {"detail": "Unauthorized"}, status_code=status.HTTP_401_UNAUTHORIZED
+        )
 
     if not file.content_type or not file.content_type.startswith("image/"):
-        return JSONResponse({"detail": "Only image files are allowed."}, status_code=status.HTTP_400_BAD_REQUEST)
+        return JSONResponse(
+            {"detail": "Only image files are allowed."},
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
 
     contents = await file.read()
     if not contents:
-        return JSONResponse({"detail": "The uploaded file was empty."}, status_code=status.HTTP_400_BAD_REQUEST)
+        return JSONResponse(
+            {"detail": "The uploaded file was empty."},
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
     if len(contents) > MAX_IMAGE_SIZE_BYTES:
-        return JSONResponse({"detail": "Images must be smaller than 5MB."}, status_code=status.HTTP_400_BAD_REQUEST)
+        return JSONResponse(
+            {"detail": "Images must be smaller than 5MB."},
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
 
     try:
-        image_url = crud.upload_product_image(user.id, file.filename, contents, file.content_type)
+        image_url = crud.upload_product_image(
+            user.id, file.filename, contents, file.content_type
+        )
     except Exception as exc:
         return JSONResponse(
             {"detail": f"Failed to upload image: {exc}"},
@@ -384,19 +434,28 @@ async def api_upload_image(request: Request, file: UploadFile = File(...)):
 async def api_create_product(request: Request, product: schemas.ProductCreate):
     user = get_current_user(request)
     if not user or user.account_type != "seller":
-        return JSONResponse({"detail": "Unauthorized"}, status_code=status.HTTP_401_UNAUTHORIZED)
+        return JSONResponse(
+            {"detail": "Unauthorized"}, status_code=status.HTTP_401_UNAUTHORIZED
+        )
     created_product = crud.create_product(None, user, product)
     return created_product
 
 
 @app.patch("/api/products/{product_id}", response_model=schemas.ProductRead)
-async def api_update_product(request: Request, product_id: int, product: schemas.ProductUpdate):
+async def api_update_product(
+    request: Request, product_id: int, product: schemas.ProductUpdate
+):
     user = get_current_user(request)
     if not user or user.account_type != "seller":
-        return JSONResponse({"detail": "Unauthorized"}, status_code=status.HTTP_401_UNAUTHORIZED)
+        return JSONResponse(
+            {"detail": "Unauthorized"}, status_code=status.HTTP_401_UNAUTHORIZED
+        )
     existing = crud.get_product_by_id(None, product_id)
     if not existing or existing.seller_id != user.id:
-        return JSONResponse({"detail": "Product not found or unauthorized"}, status_code=status.HTTP_404_NOT_FOUND)
+        return JSONResponse(
+            {"detail": "Product not found or unauthorized"},
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
     updated_product = crud.update_product(None, product_id, product)
     return updated_product
 
@@ -405,10 +464,15 @@ async def api_update_product(request: Request, product_id: int, product: schemas
 async def api_delete_product(request: Request, product_id: int):
     user = get_current_user(request)
     if not user or user.account_type != "seller":
-        return JSONResponse({"detail": "Unauthorized"}, status_code=status.HTTP_401_UNAUTHORIZED)
+        return JSONResponse(
+            {"detail": "Unauthorized"}, status_code=status.HTTP_401_UNAUTHORIZED
+        )
     existing = crud.get_product_by_id(None, product_id)
     if not existing or existing.seller_id != user.id:
-        return JSONResponse({"detail": "Product not found or unauthorized"}, status_code=status.HTTP_404_NOT_FOUND)
+        return JSONResponse(
+            {"detail": "Product not found or unauthorized"},
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
     crud.delete_product(None, product_id)
     return JSONResponse({"detail": "Deleted"}, status_code=status.HTTP_200_OK)
 
@@ -440,4 +504,5 @@ def api_dashboard():
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)

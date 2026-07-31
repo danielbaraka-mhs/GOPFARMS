@@ -58,21 +58,23 @@ _BASE_URL = (
     else "https://api.onekhusa.com/live/v1"
 )
 
-ONEKHUSA_API_KEY              = os.getenv("ONEKHUSA_API_KEY", "")
-ONEKHUSA_API_SECRET           = os.getenv("ONEKHUSA_API_SECRET", "")
-ONEKHUSA_ORGANISATION_ID      = os.getenv("ONEKHUSA_ORGANISATION_ID", "")
-ONEKHUSA_MERCHANT_ACCOUNT_NUMBER = int(os.getenv("ONEKHUSA_MERCHANT_ACCOUNT_NUMBER", "0") or "0")
-ONEKHUSA_CAPTURED_BY          = os.getenv("ONEKHUSA_CAPTURED_BY", "")
-ONEKHUSA_WEBHOOK_SECRET       = os.getenv("ONEKHUSA_WEBHOOK_SECRET", "")
+ONEKHUSA_API_KEY = os.getenv("ONEKHUSA_API_KEY", "")
+ONEKHUSA_API_SECRET = os.getenv("ONEKHUSA_API_SECRET", "")
+ONEKHUSA_ORGANISATION_ID = os.getenv("ONEKHUSA_ORGANISATION_ID", "")
+ONEKHUSA_MERCHANT_ACCOUNT_NUMBER = int(
+    os.getenv("ONEKHUSA_MERCHANT_ACCOUNT_NUMBER", "0") or "0"
+)
+ONEKHUSA_CAPTURED_BY = os.getenv("ONEKHUSA_CAPTURED_BY", "")
+ONEKHUSA_WEBHOOK_SECRET = os.getenv("ONEKHUSA_WEBHOOK_SECRET", "")
 
 
 # ---------------------------------------------------------------------------
 # OAuth 2.0 token cache  (token lasts 5 min; we refresh 30 s early)
 # ---------------------------------------------------------------------------
 
-_token_lock   = threading.Lock()
+_token_lock = threading.Lock()
 _cached_token: Optional[str] = None
-_token_expiry: float = 0.0   # epoch seconds
+_token_expiry: float = 0.0  # epoch seconds
 
 
 def _get_access_token() -> str:
@@ -83,12 +85,14 @@ def _get_access_token() -> str:
         if _cached_token and time.time() < _token_expiry - 30:
             return _cached_token
 
-        if not all([
-            ONEKHUSA_API_KEY,
-            ONEKHUSA_API_SECRET,
-            ONEKHUSA_ORGANISATION_ID,
-            ONEKHUSA_MERCHANT_ACCOUNT_NUMBER,
-        ]):
+        if not all(
+            [
+                ONEKHUSA_API_KEY,
+                ONEKHUSA_API_SECRET,
+                ONEKHUSA_ORGANISATION_ID,
+                ONEKHUSA_MERCHANT_ACCOUNT_NUMBER,
+            ]
+        ):
             raise HTTPException(
                 status_code=503,
                 detail=(
@@ -101,9 +105,9 @@ def _get_access_token() -> str:
         resp = httpx.post(
             f"{_BASE_URL}/account/getAccessToken",
             json={
-                "apiKey":                ONEKHUSA_API_KEY,
-                "apiSecret":             ONEKHUSA_API_SECRET,
-                "organisationId":        ONEKHUSA_ORGANISATION_ID,
+                "apiKey": ONEKHUSA_API_KEY,
+                "apiSecret": ONEKHUSA_API_SECRET,
+                "organisationId": ONEKHUSA_ORGANISATION_ID,
                 "merchantAccountNumber": ONEKHUSA_MERCHANT_ACCOUNT_NUMBER,
             },
             timeout=15,
@@ -126,6 +130,7 @@ def _get_access_token() -> str:
 # OneKhusa: Request-To-Pay  (generates a TAN for the customer to pay with)
 # ---------------------------------------------------------------------------
 
+
 def _request_to_pay(amount: Decimal, reference_number: str, description: str) -> dict:
     """
     POST /collections/requestToPay/initiate
@@ -143,17 +148,17 @@ def _request_to_pay(amount: Decimal, reference_number: str, description: str) ->
     resp = httpx.post(
         f"{_BASE_URL}/collections/requestToPay/initiate",
         headers={
-            "Authorization":     f"Bearer {token}",
-            "Content-Type":      "application/json",
-            "Accept-Language":   "en",
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json",
+            "Accept-Language": "en",
             "X-Idempotency-Key": reference_number,
         },
         json={
-            "merchantAccountNumber":  ONEKHUSA_MERCHANT_ACCOUNT_NUMBER,
-            "transactionAmount":      float(amount),
+            "merchantAccountNumber": ONEKHUSA_MERCHANT_ACCOUNT_NUMBER,
+            "transactionAmount": float(amount),
             "transactionDescription": description[:100],
-            "referenceNumber":        reference_number,
-            "capturedBy":             ONEKHUSA_CAPTURED_BY,
+            "referenceNumber": reference_number,
+            "capturedBy": ONEKHUSA_CAPTURED_BY,
         },
         timeout=20,
     )
@@ -172,12 +177,15 @@ def _request_to_pay(amount: Decimal, reference_number: str, description: str) ->
 # Webhook signature verification
 # ---------------------------------------------------------------------------
 
+
 def _verify_webhook_signature(signature: str, raw_body: bytes) -> bool:
     """
     Verify X-OneKhusa-Webhook-Signature using HMAC-SHA256 over the raw body.
     """
     if not ONEKHUSA_WEBHOOK_SECRET:
-        logger.warning("ONEKHUSA_WEBHOOK_SECRET not set – skipping signature check (dev only)")
+        logger.warning(
+            "ONEKHUSA_WEBHOOK_SECRET not set – skipping signature check (dev only)"
+        )
         return True
 
     expected = hmac.new(
@@ -192,6 +200,7 @@ def _verify_webhook_signature(signature: str, raw_body: bytes) -> bool:
 # Session helper
 # ---------------------------------------------------------------------------
 
+
 def get_session_user(request: Request) -> Optional[dict]:
     return request.session.get("user") if hasattr(request, "session") else None
 
@@ -199,6 +208,7 @@ def get_session_user(request: Request) -> Optional[dict]:
 # ---------------------------------------------------------------------------
 # Request models
 # ---------------------------------------------------------------------------
+
 
 class CheckoutItemIn(BaseModel):
     product_id: int
@@ -221,6 +231,7 @@ class CheckoutRequest(BaseModel):
 # Page route
 # ---------------------------------------------------------------------------
 
+
 @router.get("/checkout", response_class=HTMLResponse, name="checkout")
 async def checkout_page(request: Request):
     session_user = get_session_user(request)
@@ -228,10 +239,10 @@ async def checkout_page(request: Request):
         request,
         "farms/checkout.html",
         {
-            "request":        request,
-            "session_user":   session_user,
+            "request": request,
+            "session_user": session_user,
             "nav_first_name": (session_user or {}).get("first_name", ""),
-            "dashboard_url":  request.url_for("dashboard") if session_user else "#",
+            "dashboard_url": request.url_for("dashboard") if session_user else "#",
         },
     )
 
@@ -242,6 +253,7 @@ async def checkout_page(request: Request):
 # saves a payment record, and returns the TAN to the client.
 # ---------------------------------------------------------------------------
 
+
 @router.post("/api/checkout")
 async def submit_checkout(payload: CheckoutRequest, request: Request):
     if not payload.items:
@@ -251,32 +263,38 @@ async def submit_checkout(payload: CheckoutRequest, request: Request):
     db = None
 
     # --- Price everything server-side; never trust the client ---
-    line_items   = []
-    total        = Decimal("0")
+    line_items = []
+    total = Decimal("0")
     descriptions = []
 
     for item in payload.items:
         product = crud.get_product_by_id(db, item.product_id)
         if not product:
-            raise HTTPException(status_code=404, detail=f"Product {item.product_id} not found.")
+            raise HTTPException(
+                status_code=404, detail=f"Product {item.product_id} not found."
+            )
         if product.quantity is not None and item.quantity > product.quantity:
             raise HTTPException(
                 status_code=400,
                 detail=f"Not enough stock for '{product.title}'. Only {product.quantity} left.",
             )
         line_total = Decimal(str(product.price)) * item.quantity
-        total     += line_total
-        line_items.append({"product": product, "quantity": item.quantity, "line_total": line_total})
+        total += line_total
+        line_items.append(
+            {"product": product, "quantity": item.quantity, "line_total": line_total}
+        )
         descriptions.append(f"{item.quantity}x {product.title}")
 
     if total <= 0:
-        raise HTTPException(status_code=400, detail="Order total must be greater than zero.")
+        raise HTTPException(
+            status_code=400, detail="Order total must be greater than zero."
+        )
 
     # Build references
     checkout_reference = f"CHK-{uuid.uuid4().hex[:12].upper()}"
     # OneKhusa referenceNumber must be 5-25 alphanumeric chars
     ok_reference = checkout_reference.replace("-", "")[:25]
-    description  = ", ".join(descriptions)[:100]
+    description = ", ".join(descriptions)[:100]
 
     # --- Create pending orders in Supabase ---
     created_orders = []
@@ -303,30 +321,30 @@ async def submit_checkout(payload: CheckoutRequest, request: Request):
 
     # --- Save pending payment record ---
     payment_row = {
-        "checkout_reference":   checkout_reference,
-        "onekhusa_reference":   ok_reference,
+        "checkout_reference": checkout_reference,
+        "onekhusa_reference": ok_reference,
         "timed_account_number": tan_data["timedAccountNumber"],
-        "tan_expiry":           tan_data["expiryDate"],
-        "user_id":              (session_user or {}).get("id"),
-        "customer_name":        payload.customer.name,
-        "customer_email":       payload.customer.email,
-        "customer_phone":       payload.customer.phone,
-        "shipping_address":     payload.customer.address,
-        "amount":               float(total),
-        "currency":             "MWK",
-        "payment_method":       "onekhusa",
-        "status":               "pending",
+        "tan_expiry": tan_data["expiryDate"],
+        "user_id": (session_user or {}).get("id"),
+        "customer_name": payload.customer.name,
+        "customer_email": payload.customer.email,
+        "customer_phone": payload.customer.phone,
+        "shipping_address": payload.customer.address,
+        "amount": float(total),
+        "currency": "MWK",
+        "payment_method": "onekhusa",
+        "status": "pending",
     }
     crud.create_payment(db, payment_row)
 
     return {
-        "checkout_reference":   checkout_reference,
+        "checkout_reference": checkout_reference,
         "timed_account_number": tan_data["timedAccountNumber"],
-        "expiry_date":          tan_data["expiryDate"],
-        "expiry_in_minutes":    tan_data["expiryInMinutes"],
-        "amount":               float(total),
-        "currency":             "MWK",
-        "orders":               [o.order_number for o in created_orders],
+        "expiry_date": tan_data["expiryDate"],
+        "expiry_in_minutes": tan_data["expiryInMinutes"],
+        "amount": float(total),
+        "currency": "MWK",
+        "orders": [o.order_number for o in created_orders],
         "instructions": (
             f"Send MWK {float(total):,.2f} to account number "
             f"{tan_data['timedAccountNumber']} via your bank, "
@@ -349,10 +367,11 @@ async def submit_checkout(payload: CheckoutRequest, request: Request):
 # └─────────────────────────────────────────────────────────────────────┘
 # ---------------------------------------------------------------------------
 
+
 @router.post("/api/webhook/onekhusa", status_code=200)
 async def onekhusa_webhook(
     request: Request,
-    x_onekhusa_webhook_event: str     = Header(default=""),
+    x_onekhusa_webhook_event: str = Header(default=""),
     x_onekhusa_webhook_signature: str = Header(default=""),
 ):
     """
@@ -372,14 +391,16 @@ async def onekhusa_webhook(
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid JSON body")
 
-    event      = x_onekhusa_webhook_event
-    meta       = data.get("metaData", {})
+    event = x_onekhusa_webhook_event
+    meta = data.get("metaData", {})
     ok_reference = meta.get("referenceNumber", "")
-    tx_status  = data.get("transactionStatusCode", "")
-    tx_ref     = data.get("transactionReferenceNumber", "")
-    tx_amount  = data.get("transactionAmount", 0)
+    tx_status = data.get("transactionStatusCode", "")
+    tx_ref = data.get("transactionReferenceNumber", "")
+    tx_amount = data.get("transactionAmount", 0)
 
-    logger.info("OneKhusa webhook: event=%s ref=%s status=%s", event, ok_reference, tx_status)
+    logger.info(
+        "OneKhusa webhook: event=%s ref=%s status=%s", event, ok_reference, tx_status
+    )
 
     if not ok_reference:
         # Not one of our request-to-pay events — ignore
@@ -399,24 +420,32 @@ async def onekhusa_webhook(
         payment = (resp.data or [None])[0]
     except Exception as exc:
         logger.error("Webhook DB lookup error: %s", exc)
-        return {"received": True}  # return 200 so OneKhusa does not keep retrying on DB blips
+        return {
+            "received": True
+        }  # return 200 so OneKhusa does not keep retrying on DB blips
 
     if not payment:
-        logger.warning("Webhook: payment not found for onekhusa_reference=%s", ok_reference)
+        logger.warning(
+            "Webhook: payment not found for onekhusa_reference=%s", ok_reference
+        )
         return {"received": True}
 
-    payment_id         = payment["id"]
+    payment_id = payment["id"]
     checkout_reference = payment["checkout_reference"]
 
     # 4. Handle the event
     if event == "payrequest.success" and tx_status == "S":
         # Mark payment as completed
-        crud.update_payment(db, payment_id, {
-            "status":            "completed",
-            "gateway":           "onekhusa",
-            "gateway_reference": tx_ref,
-            "gateway_amount":    tx_amount,
-        })
+        crud.update_payment(
+            db,
+            payment_id,
+            {
+                "status": "completed",
+                "gateway": "onekhusa",
+                "gateway_reference": tx_ref,
+                "gateway_amount": tx_amount,
+            },
+        )
 
         # Update all orders under this checkout to Paid and bump sold counts
         try:
@@ -426,10 +455,10 @@ async def onekhusa_webhook(
                 .eq("checkout_reference", checkout_reference)
                 .execute()
             )
-            for order_row in (orders_resp.data or []):
-                crud.supabase_client.table("orders").update(
-                    {"status": "Paid"}
-                ).eq("id", order_row["id"]).execute()
+            for order_row in orders_resp.data or []:
+                crud.supabase_client.table("orders").update({"status": "Paid"}).eq(
+                    "id", order_row["id"]
+                ).execute()
 
                 if order_row.get("product_id"):
                     product = crud.get_product_by_id(db, order_row["product_id"])
@@ -441,20 +470,26 @@ async def onekhusa_webhook(
             logger.error("Webhook: error updating orders after success: %s", exc)
 
     elif event == "payrequest.reversed":
-        crud.update_payment(db, payment_id, {
-            "status":            "reversed",
-            "gateway":           "onekhusa",
-            "gateway_reference": tx_ref,
-        })
+        crud.update_payment(
+            db,
+            payment_id,
+            {
+                "status": "reversed",
+                "gateway": "onekhusa",
+                "gateway_reference": tx_ref,
+            },
+        )
         try:
-            crud.supabase_client.table("orders").update(
-                {"status": "Reversed"}
-            ).eq("checkout_reference", checkout_reference).execute()
+            crud.supabase_client.table("orders").update({"status": "Reversed"}).eq(
+                "checkout_reference", checkout_reference
+            ).execute()
         except Exception as exc:
             logger.error("Webhook: error updating orders after reversal: %s", exc)
 
     else:
-        logger.info("Webhook: unhandled event=%s status=%s – no action", event, tx_status)
+        logger.info(
+            "Webhook: unhandled event=%s status=%s – no action", event, tx_status
+        )
 
     return {"received": True}
 
@@ -463,6 +498,7 @@ async def onekhusa_webhook(
 # GET /api/checkout/status/{checkout_reference}
 # Client polls this every ~10 s while waiting for the webhook to confirm payment.
 # ---------------------------------------------------------------------------
+
 
 @router.get("/api/checkout/status/{checkout_reference}")
 async def checkout_status(checkout_reference: str):
@@ -482,12 +518,12 @@ async def checkout_status(checkout_reference: str):
         raise HTTPException(status_code=404, detail="Checkout not found")
 
     return {
-        "checkout_reference":   checkout_reference,
-        "status":               payment["status"],   # pending | completed | reversed
-        "amount":               payment["amount"],
-        "currency":             payment["currency"],
+        "checkout_reference": checkout_reference,
+        "status": payment["status"],  # pending | completed | reversed
+        "amount": payment["amount"],
+        "currency": payment["currency"],
         "timed_account_number": payment.get("timed_account_number"),
-        "tan_expiry":           payment.get("tan_expiry"),
+        "tan_expiry": payment.get("tan_expiry"),
     }
 
 
