@@ -1,27 +1,40 @@
-name: Python CI
+name: Python CI + Deploy to Render
 
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:          # allows manual run from GitHub
 
 jobs:
+  # ---------- CI ----------
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4   # (or similar version)
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+          cache: 'pip'
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install black
 
       - name: Lint with black
-        run: |
-          pip install black
-          black --check .
+        run: black --check .
+
+  # ---------- Deploy to Render ----------
+  deploy:
+    needs: build                    # only runs if CI succeeds
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger Render Deploy
+        run: curl -fsSL -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
